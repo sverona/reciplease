@@ -1,0 +1,129 @@
+@font-face {
+  font-family: 'Merriweather';
+
+  src: url('fonts/Merriweather.ttf') format('truetype-variations');
+
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'Merriweather';
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+body {
+  max-width: 900px;
+  margin: auto;
+}
+
+article {
+  display: grid;
+  grid-template-columns: 1fr 1.55fr;
+  grid-gap: 0 5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+#instructions {
+  grid-row: span 3;
+}
+
+.frac {
+  font-variant-numeric: diagonal-fractions;
+}
+
+.amount {
+  color: #444;
+}
+
+h1, .byline, h2, h3 {
+  font-variant: all-small-caps;
+  display: block;
+  letter-spacing: .15em;
+
+  text-align: center;
+
+  line-height: 1;
+}
+
+.byline span {
+  vertical-align: middle;
+}
+
+h1, h2, h3 {
+  font-weight: 400;
+}
+
+
+header {
+  overflow: auto;
+
+}
+
+.metadata {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-block-start: 1rem;
+}
+
+ul, ol {
+  margin-top: 0;
+  padding: 0;
+}
+
+h1 {
+  font-weight: 400;
+  margin-block-end: 0.25rem;
+}
+
+
+p, li {
+  margin-block: 0.5rem;
+}
+
+li::marker {
+  color: #777;
+}
+
+ul {
+  list-style-type: none;
+}
+
+header div span:not(:last-of-type):after {
+  content: " | ";
+}
+
+#index {
+  margin-top: 16rem;
+  display: flex;
+  flex-direction: column;
+  place-items: center;
+
+  grid-gap: 1.6rem;
+
+  font-size: 1.5rem;
+}
+
+#index h1 {
+  font-size: 4rem;
+}
+
+#index form input,
+#index form button {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  padding: 0.5ch;
+}
+
+#index form input {
+  margin-left: 0;
+  width: 30ch;
+}

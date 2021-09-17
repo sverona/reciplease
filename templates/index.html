@@ -1,0 +1,13 @@
+<!doctype html>
+<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" type="text/css" />
+<main id="index">
+  <h1>reciplea.se</h1>
+  <div id="tagline">
+    Universal print recipe button for <span class="site">$site_slideshow</span>
+  </div>
+  <form method="POST" action="/reciplease">
+    <span>https://reciplea.se/</span>
+    <input placeholder="Enter recipe URL..." name="recipeUrl"/>
+    <button type="submit">Print</button>
+  </form>
+</main>

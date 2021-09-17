@@ -7,6 +7,13 @@ import requests as r
 
 from typing import List, Tuple
 
+from handlers.seriouseats import SeriousEatsHandler
+from handlers.allrecipes import AllrecipesHandler
+from handlers.kingarthur import KingArthurHandler
+from handlers.tasty import TastyHandler
+from handlers.wordpress import WordpressHandler
+from handlers.wordpress_tasty import WordpressTastyHandler
+
 
 @dataclass
 class Amount:
@@ -26,9 +33,31 @@ class Recipe:
     notes: List[str] = field(default_factory=list)
 
 
+handlers = [SeriousEatsHandler,
+            AllrecipesHandler,
+            KingArthurHandler,
+            TastyHandler,
+            WordpressHandler,
+            WordpressTastyHandler
+            ]
+
+
 def url_to_recipe(url: str) -> Recipe:
-    req = r.get(url)
+    handler = None
+    for h in handlers:
+        handler = h()
+        print(handler, url)
+        if handler.match(url):
+            break
+    else:
+        raise Exception("No usable handler found.")
+
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:88.0) Gecko/20100101 Firefox/88.0"
+    }
+    req = r.get(url, headers=headers)
     if req.status_code != 200:
+        print(f"Error {req.status_code}")
         raise Exception
 
     raw_html = req.text
@@ -36,22 +65,36 @@ def url_to_recipe(url: str) -> Recipe:
 
     recipe = Recipe()
 
-    ingredients_section = soup.find("section", class_="section--ingredients")
-    ingredients = ingredients_section.select("ul li")
-
-    recipe.ingredients = [li.text.strip() for li in ingredients]
-
-    # TODO Make a website to ID dict
-    instructions_section = soup.find("section", class_="section--instructions")
-
-    instructions = instructions_section.select("ol li")
-    # instructions = [tag for li in instructions for tag in li.find_all(lambda tag: tag.name != "figure")]
-
-    recipe.instructions = [sub(r"\n[\n\t ]+", r"\n", li.text).strip() for li in instructions]
+    recipe.title = handler.title(soup)
+    recipe.author = handler.author(soup)
+    recipe.source = handler.source(soup)
+    recipe.ingredients = handler.ingredients(soup)
+    recipe.instructions = handler.instructions(soup)
+    recipe.yield_ = handler.yield_(soup)
+    recipe.notes = handler.notes(soup)
+    recipe.time = handler.time(soup)
 
     return recipe
 
 
-recipe = url_to_recipe(argv[1])
+if __name__ == "__main__":
+    recipe = url_to_recipe(argv[1])
 
-print(recipe)
+    print(recipe.title)
+
+    print("INGREDIENTS")
+    for name, ings in (recipe.ingredients.items()):
+        if name:
+            print(f"{name}:")
+        for i, ing in enumerate(ings):
+            if ing:
+                print(f"{i + 1}. {ing}")
+
+    print()
+    print("INSTRUCTIONS")
+    for name, insts in (recipe.instructions.items()):
+        if name:
+            print(f"{name}:")
+        for i, inst in enumerate(insts):
+            if inst:
+                print(f"{i + 1}. {inst}")
