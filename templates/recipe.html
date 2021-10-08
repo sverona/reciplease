@@ -9,8 +9,9 @@
       </span>
       <ul class="metadata">
         <li class="yield"> Yields {{ recipe.yield_ }}</li>
-        <li class="active-time">Active time: {{ recipe.active_time }}</li>
-        <li class="total-time">Total time: {{ recipe.total_time }}</li>
+        {% for label, time in recipe.time.items() %}
+        <li class="time">{{ label.capitalize() }} time: {{ time }} </li>
+        {% endfor %}
       </ul>
   </header>
   <article>
@@ -39,12 +40,14 @@
     </section>
     {% if recipe.notes %}
     <section id="notes">
-        <h2>Notes</h2>
+        {% for section, note_list in recipe.notes.items() %}
+        {% if section %}<h2>{{ section or "Notes" }}</h2>{% endif %}
         <ol>
-        {% for p in recipe.notes %}
-        <li>{{p}}</li>
-        {% endfor %}
+          {% for note in note_list %}
+          <li>{{ note }}</li>
+          {% endfor %}
         </ol>
+        {% endfor %}
     </section>
     {% endif %}
   </article>

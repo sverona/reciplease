@@ -26,5 +26,5 @@ def extract(soup, root, keep_these, remove_these, as_text=True):
                 return [tag.text.strip() for tag in keepers]
             return keepers
 
-        return root_element.text.strip()
+        return [root_element.text.strip()]
     return []

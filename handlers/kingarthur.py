@@ -3,7 +3,7 @@ import re
 from bs4 import NavigableString
 
 from .handler import RecipeHandler, split_into_subheads
-from .extract import extract
+from .extract import extract, extract_one
 
 
 class KingArthurHandler(RecipeHandler):
@@ -20,19 +20,15 @@ class KingArthurHandler(RecipeHandler):
         return h1.text.strip()
 
     def author(self, soup: NavigableString) -> NavigableString:
-        article_author = soup.find("p", class_="article__author")
-
-        if article_author is not None:
-            text = article_author.text
-            return re.sub(r"^By\s+", "", text).strip()
-        else:
-            return "King Arthur Baking"
+        author = extract_one(soup, ".article__author", [], [])
+        if author:
+            return re.sub(r"^By\s+", "", author).strip()
+        return "King Arthur Baking"
 
     def ingredients(self, soup: NavigableString) -> NavigableString:
-        section = soup.find(True, class_="ingredients-list")
-
         ingredients = {}
-        for subhead in section.findAll("div", class_="ingredient-section"):
+        subheads = extract(soup, ".ingredients-list", [".ingredient-section"], [], False)
+        for subhead in subheads:
             if subhead.find("p"):
                 title = subhead.find("p").text
             else:
@@ -41,20 +37,7 @@ class KingArthurHandler(RecipeHandler):
         return ingredients
 
     def instructions(self, soup: NavigableString) -> NavigableString:
-        section = soup.find(True, class_="field--recipe-steps")
-
-        for tag in section.select("li aside"):
-            tag.extract()
-
-        instructions = section.select("ol li")
-        if not instructions:
-            instructions = section.select("ul li")
-
-        instructions = [re.sub(r"\n[\n\t ]+", r"\n", li.text).strip() for li in instructions]
-
-        instructions = [inst for inst in instructions if len(inst) > 0]
-
-        print(instructions)
+        instructions = extract(soup, ".field--recipe-steps", ["ol li", "ul li"], ["li aside", ".share"])
 
         return split_into_subheads(instructions)
 

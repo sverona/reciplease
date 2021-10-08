@@ -3,14 +3,10 @@ import re
 from bs4 import NavigableString
 
 from .handler import RecipeHandler, split_into_subheads
+from .extract import extract, extract_one
 
 
 class WordpressHandler(RecipeHandler):
-    regexes = {
-        r"cafedelites\.com": "Cafe Delites",
-        r"cookwithmanali\.com": "Cook With Manali",
-    }
-
     def __init__(self):
         super(RecipeHandler, self).__init__()
 
@@ -22,6 +18,8 @@ class WordpressHandler(RecipeHandler):
     def author(self, soup: NavigableString) -> NavigableString:
         author_name = soup.find(True, class_="entry-author-name")
 
+        if not author_name:
+            return ""
         return author_name.text.strip()
 
     def yield_(self, soup: NavigableString) -> NavigableString:
@@ -84,17 +82,17 @@ class WordpressHandler(RecipeHandler):
 
         return result
 
-    def total_time(self, soup: NavigableString) -> NavigableString:
-        total_time_container = soup.find(True, class_="wprm-recipe-total-time-container")
-        recipe_time = total_time_container.find(True, class_="wprm-recipe-time")
+    def time(self, soup: NavigableString) -> NavigableString:
+        section = extract_one(soup, None, [".wprm-recipe-times-container"], [], False)
 
-        return recipe_time.text.strip()
+        values = extract(section, None, [".wprm-recipe-time"], [])
+        labels = extract(section, None, [".wprm-recipe-time-label"], [])
+        labels = [re.sub(" Tim:$", "", label, re.I) for label in labels]
 
-    def active_time(self, soup: NavigableString) -> NavigableString:
-        active_time_container = soup.find(True, class_="wprm-recipe-prep-time-container")
-        recipe_time = active_time_container.find(True, class_="wprm-recipe-time")
+        accept = ["cook", "prep", "additional", "total"]
+        pairs = {label.capitalize(): value for label, value in zip(labels, values) if label in accept}
 
-        return recipe_time.text.strip()
+        return pairs
 
     def notes(self, soup: NavigableString) -> NavigableString:
         div = soup.find(True, class_="wprm-recipe-notes")

@@ -43,14 +43,6 @@ handlers = [SeriousEatsHandler,
 
 
 def url_to_recipe(url: str) -> Recipe:
-    handler = None
-    for h in handlers:
-        handler = h()
-        print(handler, url)
-        if handler.match(url):
-            break
-    else:
-        raise Exception("No usable handler found.")
 
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:88.0) Gecko/20100101 Firefox/88.0"
@@ -63,16 +55,30 @@ def url_to_recipe(url: str) -> Recipe:
     raw_html = req.text
     soup = BeautifulSoup(raw_html, "html.parser")
 
+    handler = None
+    handler_found = False
+    for h in handlers:
+        handler = h()
+        try:
+            if handler.instructions(soup) and handler.ingredients(soup):
+                handler_found = True
+                break
+        except:
+            pass
+
+    if not handler_found:
+        raise Exception("No usable handler found.")
+
     recipe = Recipe()
 
-    recipe.title = handler.title(soup)
-    recipe.author = handler.author(soup)
-    recipe.source = handler.source(soup)
-    recipe.ingredients = handler.ingredients(soup)
-    recipe.instructions = handler.instructions(soup)
-    recipe.yield_ = handler.yield_(soup)
-    recipe.notes = handler.notes(soup)
-    recipe.time = handler.time(soup)
+    recipe.title = h().title(soup)
+    recipe.author = h().author(soup)
+    recipe.source = h().source(soup)
+    recipe.ingredients = h().ingredients(soup)
+    recipe.instructions = h().instructions(soup)
+    recipe.yield_ = h().yield_(soup)
+    recipe.notes = h().notes(soup)
+    recipe.time = h().time(soup)
 
     return recipe
 
