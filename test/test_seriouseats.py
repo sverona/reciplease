@@ -1,11 +1,11 @@
-from scrape import url_to_recipe
+from scrape import from_url 
 
 
 class TestSeriousEats:
     """The Serious Eats handler should...
     """
     url = "https://www.seriouseats.com/creamy-cucumber-salad-5196314"
-    recipe = url_to_recipe(url)
+    recipe = from_url(url)
 
     def test_ingredients(self):
         """...properly scrape ingredients.

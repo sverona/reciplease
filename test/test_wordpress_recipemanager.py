@@ -1,5 +1,4 @@
-
-from scrape import url_to_recipe
+from scrape import from_url
 
 
 class TestWordpressRecipeManager:
@@ -7,7 +6,7 @@ class TestWordpressRecipeManager:
     """
 
     url = "https://www.cookwithmanali.com/moong-dal-dosa/"
-    recipe = url_to_recipe(url)
+    recipe = from_url(url)
 
     def test_title(self):
         """...properly scrape the title.
@@ -22,7 +21,7 @@ class TestWordpressRecipeManager:
     def test_ingredients(self):
         """...properly scrape ingredients.
         """
-        assert "1 inch ginger" in self.recipe.ingredients['']
+        assert "1 inch ginger" in self.recipe.ingredients[None]
         assert "7-8 curry leaves" in self.recipe.ingredients['Paneer filling']
 
     def test_instruction_sections(self):
