@@ -7,7 +7,7 @@ import re
 from typing import Iterable
 import unicodedata
 
-from bs4 import BeautifulSoup, Tag
+from bs4 import BeautifulSoup, NavigableString, Tag
 
 
 SubheadingGroup = dict[str | None, list[str]]
@@ -103,14 +103,16 @@ class RecipeHandler:
             return elements[0]
         return None
 
-def text(tag: Tag | None) -> str:
+def text(tag: Tag | NavigableString | None) -> str:
     """Return the normalized, stripped text of an HTML `tag`, or the empty
     string if `tag` is `None`.
     """
     if not tag:
         return ""
-
-    return unicodedata.normalize(tag.text.strip(), "NFCK")
+    text_ = tag.text.strip()
+    if unicodedata.is_normalized("NFKC", text_):
+        return text_
+    return unicodedata.normalize("NFKC", text_)
 
 def split_into_subheadings(list_to_split: list[str], regex=r"[^.]+:") -> SubheadingGroup:
     """Split a list of strings (say, of instructions or ingredients) which

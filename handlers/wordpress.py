@@ -2,7 +2,7 @@ import re
 
 from bs4 import Tag
 
-from . import RecipeHandler, SubheadingGroup
+from . import RecipeHandler, SubheadingGroup, text
 
 
 class WordpressHandler(RecipeHandler):
@@ -10,15 +10,11 @@ class WordpressHandler(RecipeHandler):
     """
     def title(self) -> str:
         title = self.extract_one(".wprm-recipe-name")
-        if title:
-            return title.text.strip()
-        return ""
+        return text(title)
 
     def author(self) -> str:
         author_name = self.extract_one(".entry-author-name")
-        if author_name:
-            return author_name.text.strip()
-        return ""
+        return text(author_name)
 
     def source(self) -> str:
         site_name = self.soup.find("meta", attrs={"property": "og:site_name"})
@@ -33,15 +29,11 @@ class WordpressHandler(RecipeHandler):
     def yield_(self) -> str:
         recipe_servings = self.soup.find(True, class_="wprm-recipe-servings")
 
-        if recipe_servings is None:
-            return ""
+        servings_text = text(recipe_servings)
 
-        text = recipe_servings.text.strip()
-
-        if re.match(r"\d+", text):
-            return f"{text} servings"
-
-        return text
+        if re.match(r"\d+", servings_text):
+            return f"{servings_text} servings"
+        return servings_text
 
     def ingredients(self) -> SubheadingGroup:
         div = self.soup.find(True, class_="wprm-recipe-ingredients-container")
@@ -56,9 +48,7 @@ class WordpressHandler(RecipeHandler):
         for group in groups:
             name_container = group.find(True, class_="wprm-recipe-group-name")
             if name_container:
-                name = name_container.text.strip()
-                if name.endswith(":"):
-                    name = name[:-1]
+                name = re.sub(":$", "", text(name_container))
             else:
                 name = None
 
@@ -66,7 +56,7 @@ class WordpressHandler(RecipeHandler):
             for ingredient in ingredients:
                 for checkbox in ingredient.find_all(True, class_="wprm-checkbox-container"):
                     checkbox.extract()
-            ingredients = [li.text.strip() for li in ingredients]
+            ingredients = [text(li) for li in ingredients]
             result[name] = ingredients
 
         return result
@@ -84,17 +74,15 @@ class WordpressHandler(RecipeHandler):
         for group in groups:
             name_container = group.find(True, class_="wprm-recipe-group-name")
             if name_container:
-                name = name_container.text.strip()
-                if name.endswith(":"):
-                    name = name[:-1]
+                name = re.sub(":$", "", text(name_container))
             else:
-                name = ""
+                name = None
 
             instructions = group.select("li.wprm-recipe-instruction")
             for instruction in instructions:
                 for checkbox in instruction.find_all(True, class_="wprm-checkbox-container"):
                     checkbox.extract()
-            instructions = [li.text.strip() for li in instructions]
+            instructions = [text(li) for li in instructions]
             result[name] = instructions
 
         return result
@@ -104,15 +92,15 @@ class WordpressHandler(RecipeHandler):
 
         if section:
             values_tags = section.select(".wprm-recipe-time")
-            values = [value.text.strip() for value in values_tags]
+            values = [text(value) for value in values_tags]
 
             labels_tags = section.select(".wprm-recipe-time-label")
-            labels = [re.sub(" Tim:$", "", label.text.strip()) for label in labels_tags]
+            labels = [re.sub(r"( Time)?:?\s*$", "", text(label)) for label in labels_tags]
 
-            acceptable_labels = ["cook", "prep", "additional", "total"]
+            acceptable_labels = ["cook", "prep", "additional", "total", "rest"]
             pairs = {label.capitalize(): value
                      for label, value in zip(labels, values)
-                     if label in acceptable_labels}
+                     if label.lower() in acceptable_labels}
 
             return pairs
         return {}
