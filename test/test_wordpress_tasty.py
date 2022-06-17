@@ -87,7 +87,7 @@ class TestWordpressTastyPreV3:
     def test_yield(self):
         """...properly scrape the yield.
         """
-        assert self.recipe.yield_ == "1"
+        assert self.recipe.yield_ == "1 Serving"
 
     def test_ingredients(self):
         """...properly scrape the ingredients.
