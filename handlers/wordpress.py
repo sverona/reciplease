@@ -1,29 +1,40 @@
 import re
 
-from bs4 import NavigableString
+from bs4 import Tag
 
-from .handler import RecipeHandler, split_into_subheads
-from .extract import extract, extract_one
+from . import RecipeHandler, SubheadingGroup
 
 
 class WordpressHandler(RecipeHandler):
-    def __init__(self):
-        super(RecipeHandler, self).__init__()
+    """Handler for recipes from blogs that use Wordpress Recipe Manager (WPRM).
+    """
+    def title(self) -> str:
+        title = self.extract_one(".wprm-recipe-name")
+        if title:
+            return title.text.strip()
+        return ""
 
-    def title(self, soup: NavigableString) -> NavigableString:
-        h1 = soup.find(True, class_="wprm-recipe-name")
+    def author(self) -> str:
+        author_name = self.extract_one(".entry-author-name")
+        if author_name:
+            return author_name.text.strip()
+        return ""
 
-        return h1.text.strip()
+    def source(self) -> str:
+        site_name = self.soup.find("meta", attrs={"property": "og:site_name"})
 
-    def author(self, soup: NavigableString) -> NavigableString:
-        author_name = soup.find(True, class_="entry-author-name")
+        if isinstance(site_name, Tag):
+            content = site_name.attrs["content"]
+            if isinstance(content, str):
+                return content
+            return ", ".join(content)
+        return ""
 
-        if not author_name:
+    def yield_(self) -> str:
+        recipe_servings = self.soup.find(True, class_="wprm-recipe-servings")
+
+        if recipe_servings is None:
             return ""
-        return author_name.text.strip()
-
-    def yield_(self, soup: NavigableString) -> NavigableString:
-        recipe_servings = soup.find(True, class_="wprm-recipe-servings")
 
         text = recipe_servings.text.strip()
 
@@ -32,8 +43,11 @@ class WordpressHandler(RecipeHandler):
 
         return text
 
-    def ingredients(self, soup: NavigableString) -> NavigableString:
-        div = soup.find(True, class_="wprm-recipe-ingredients-container")
+    def ingredients(self) -> SubheadingGroup:
+        div = self.soup.find(True, class_="wprm-recipe-ingredients-container")
+
+        if not isinstance(div, Tag):
+            return {}
 
         result = {}
 
@@ -46,7 +60,7 @@ class WordpressHandler(RecipeHandler):
                 if name.endswith(":"):
                     name = name[:-1]
             else:
-                name = ""
+                name = None
 
             ingredients = group.select("ul li.wprm-recipe-ingredient")
             for ingredient in ingredients:
@@ -57,8 +71,11 @@ class WordpressHandler(RecipeHandler):
 
         return result
 
-    def instructions(self, soup: NavigableString) -> NavigableString:
-        div = soup.find(True, class_="wprm-recipe-instructions-container")
+    def instructions(self) -> SubheadingGroup:
+        div = self.soup.find(True, class_="wprm-recipe-instructions-container")
+
+        if not isinstance(div, Tag):
+            return {}
 
         result = {}
 
@@ -73,7 +90,7 @@ class WordpressHandler(RecipeHandler):
             else:
                 name = ""
 
-            instructions = group.select("ul li.wprm-recipe-instruction")
+            instructions = group.select("li.wprm-recipe-instruction")
             for instruction in instructions:
                 for checkbox in instruction.find_all(True, class_="wprm-checkbox-container"):
                     checkbox.extract()
@@ -82,22 +99,28 @@ class WordpressHandler(RecipeHandler):
 
         return result
 
-    def time(self, soup: NavigableString) -> NavigableString:
-        section = extract_one(soup, None, [".wprm-recipe-times-container"], [], False)
+    def time(self) -> dict[str, str]:
+        section = self.extract_one(".wprm-recipe-times-container")
 
-        values = extract(section, None, [".wprm-recipe-time"], [])
-        labels = extract(section, None, [".wprm-recipe-time-label"], [])
-        labels = [re.sub(" Tim:$", "", label, re.I) for label in labels]
+        if section:
+            values_tags = section.select(".wprm-recipe-time")
+            values = [value.text.strip() for value in values_tags]
 
-        accept = ["cook", "prep", "additional", "total"]
-        pairs = {label.capitalize(): value for label, value in zip(labels, values) if label in accept}
+            labels_tags = section.select(".wprm-recipe-time-label")
+            labels = [re.sub(" Tim:$", "", label.text.strip()) for label in labels_tags]
 
-        return pairs
+            acceptable_labels = ["cook", "prep", "additional", "total"]
+            pairs = {label.capitalize(): value
+                     for label, value in zip(labels, values)
+                     if label in acceptable_labels}
 
-    def notes(self, soup: NavigableString) -> NavigableString:
-        div = soup.find(True, class_="wprm-recipe-notes")
+            return pairs
+        return {}
+
+    def notes(self) -> SubheadingGroup:
+        div = self.soup.find(True, class_="wprm-recipe-notes")
 
         if div:
-            return [div.text.strip()]
+            return {"": [line for line in div.text.split("\n") if line]}
 
-        return []
+        return {}

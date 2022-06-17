@@ -1,62 +1,55 @@
-import re
-
-from bs4 import NavigableString
-
-from .handler import RecipeHandler, split_into_subheads
-
+from . import RecipeHandler, SubheadingGroup
 
 class TastyHandler(RecipeHandler):
-    regexes = {r"tasty\.co": "Tasty"}
+    """Handler for recipes from tasty.co.
+    """
+    def title(self) -> str:
+        title = self.soup.find(True, class_="recipe-name")
+        if title:
+            return title.text.strip()
+        return ""
 
-    def __init__(self):
-        super().__init__()
+    def author(self) -> str:
+        byline = self.soup.find(True, class_="byline")
+        if byline:
+            return byline.text.strip()
+        return ""
 
-    def title(self, soup: NavigableString) -> NavigableString:
-        title = soup.find(True, class_="recipe-name")
+    def source(self) -> str:
+        return "tasty.co"
 
-        return title.text.strip()
+    def time(self) -> dict[str, str]:
+        return {}
 
-    def author(self, soup: NavigableString) -> NavigableString:
-        byline = soup.find(True, class_="byline")
+    def ingredients(self) -> SubheadingGroup:
+        sections = self.extract(".ingredients__section")
 
-        if not byline:
-            return "Tasty"
-        return byline.text.strip()
+        ingredients = {}
+        for section in sections:
+            name_tag = section.find(True, class_="ingredient-section-name")
+            if name_tag:
+                name = name_tag.text.strip()
+            else:
+                name = None
 
-    def active_time(self, soup: NavigableString) -> NavigableString:
-        prep_time = soup.find(lambda tag: "Prep Time" in tag.text, class_="recipe-time")
+            ingredients_tags = section.select("ul li")
+            these_ingredients = [li.text.strip() for li in ingredients_tags]
+            print(name, these_ingredients)
+            ingredients[name] = these_ingredients
+        return ingredients
 
-        actual_time = prep_time.find(True, class_="md-block")
-        return actual_time.text.strip()
+    def instructions(self) -> SubheadingGroup:
+        instruction_tags = self.extract(".preparation .prep-steps li")
+        if instruction_tags:
+            instructions = [li.text.strip() for li in instruction_tags]
 
-    def total_time(self, soup: NavigableString) -> NavigableString:
-        total_time = soup.find(lambda tag: "Total Time" in tag.text, class_="recipe-time")
+            return {None: instructions}
+        return {}
 
-        actual_time = total_time.find(True, class_="md-block")
-        return actual_time.text.strip()
-
-    def ingredients(self, soup: NavigableString) -> NavigableString:
-        section = soup.find(True, class_="ingredients-prep")
-
-        groups = section.find(True, class_="ingredients__section")
-
-        ingredients = section.select("ul li")
-        ingredients = [li.text.strip() for li in ingredients]
-
-        return {'': ingredients}
-
-    def instructions(self, soup: NavigableString) -> NavigableString:
-        section = soup.find(True, class_="preparation")
-
-        groups = section.find(True, class_="prep-steps")
-
-        instructions = groups.select("li")
-        instructions = [li.text.strip() for li in instructions]
-
-        return {'': instructions}
-
-    def yield_(self, soup: NavigableString) -> NavigableString:
-        servings = soup.find(True, class_="servings-display")
-        if servings.text.startswith("for "):
-            return servings.text[4:]
-        return servings.text
+    def yield_(self) -> str:
+        servings = self.soup.find(True, class_="servings-display")
+        if servings:
+            if servings.text.startswith("for "):
+                return servings.text[4:]
+            return servings.text
+        return ""

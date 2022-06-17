@@ -1,45 +1,55 @@
 import re
 
-from bs4 import NavigableString
-
-from .handler import RecipeHandler
-from .extract import extract, extract_one
-
+from . import RecipeHandler, SubheadingGroup
 
 class AllrecipesHandler(RecipeHandler):
-    regexes = {r"allrecipes\.com": "AllRecipes"}
+    """Handler for recipes from allrecipes.com.
+    """
 
-    def __init__(self):
-        super().__init__()
+    def title(self) -> str:
+        tag = self.extract_one("h1", root=".recipe-main-header")
+        if tag:
+            return tag.text.strip()
+        return ""
 
-    def title(self, soup: NavigableString) -> NavigableString:
-        return extract_one(soup, ".recipe-main-header", ["h1"], [])
+    def source(self) -> str:
+        return "Allrecipes"
 
-    def ingredients(self, soup: NavigableString) -> NavigableString:
-        sections = extract(soup, None, [".ingredients-section__fieldset"], [], False)
+    def ingredients(self) -> SubheadingGroup:
+        sections = self.extract(".ingredients-section__fieldset")
 
-        headings = [extract_one(section, None, [".ingredients-section__legend"], []) for section in sections]
+        headings: list[str | None] = []
+        for section in sections:
+            heading_tag = RecipeHandler(section).extract_one(".ingredients-section__legend")
+            if heading_tag:
+                heading_text = heading_tag.text.strip()
+                heading_text = re.sub("^For the ", "", heading_text)
+                heading_text = re.sub(":$", "", heading_text)
+                headings.append(heading_text)
+            else:
+                headings.append(None)
 
-        headings = [re.sub("^For the ", "", heading, re.I) for heading in headings]
-        headings = [re.sub(":$", "", heading, re.I) for heading in headings]
-
-        ingredients = {heading: extract(section, None, ["li"], []) for heading, section in zip(headings, sections)}
+        ingredients: SubheadingGroup = {}
+        for heading, section in zip(headings, sections):  # type: ignore
+            these_ingredients = RecipeHandler(section).extract("li")
+            ingredients[heading] = [ing.text.strip() for ing in these_ingredients if ing]
 
         return ingredients
 
-    def instructions(self, soup: NavigableString) -> NavigableString:
-        sections = extract(soup, None, [".instructions-section"], [], False)
+    def instructions(self) -> SubheadingGroup:
+        # I was unable to find a recipe on this site with distinct sections or section headings.
+        # If you find one, please open a PR. SVM
+        steps_tags = self.extract(".section-body", root=".instructions-section")
+        steps = [step.text.strip() for step in steps_tags]
 
-        steps = [extract(section, None, [".section-body"], []) for section in sections]
+        return {None: steps}
 
-        return {'': steps[0]}
+    def yield_(self) -> str:
+        values_tags = self.extract(".recipe-meta-item-body", root=".recipe-meta-container")
+        labels_tags = self.extract(".recipe-meta-item-header", root=".recipe-meta-container")
 
-    def yield_(self, soup: NavigableString) -> NavigableString:
-        section = extract_one(soup, ".recipe-content-container", [".recipe-info-section"], [], False)
-
-        values = extract(section, None, [".recipe-meta-item-body"], [])
-        labels = extract(section, None, [".recipe-meta-item-header"], [])
-        labels = [re.sub(":$", "", label, re.I) for label in labels]
+        values = [value.text.strip() for value in values_tags]
+        labels = [re.sub(":$", "", label.text.strip()) for label in labels_tags]
 
         pairs = {label.capitalize(): value for label, value in zip(labels, values)}
 
@@ -49,26 +59,40 @@ class AllrecipesHandler(RecipeHandler):
             return pairs["Servings"]
         return ""
 
-    def time(self, soup: NavigableString) -> NavigableString:
-        section = extract_one(soup, ".recipe-content-container", [".recipe-info-section"], [], False)
+    def time(self) -> dict[str, str]:
+        values_tags = self.extract(".recipe-meta-item-body", root=".recipe-meta-container")
+        labels_tags = self.extract(".recipe-meta-item-header", root=".recipe-meta-container")
 
-        values = extract(section, None, [".recipe-meta-item-body"], [])
-        labels = extract(section, None, [".recipe-meta-item-header"], [])
-        labels = [re.sub(":$", "", label, re.I) for label in labels]
+        values = [value.text.strip() for value in values_tags]
+        labels = [re.sub(":$", "", label.text.strip()) for label in labels_tags]
 
         accept = ["cook", "prep", "additional", "total"]
-        pairs = {label.capitalize(): value for label, value in zip(labels, values) if label in accept}
+        pairs = {label.capitalize(): value
+                 for label, value in zip(labels, values)
+                 if label in accept}
 
         return pairs
 
-    def notes(self, soup: NavigableString) -> NavigableString:
-        sections = extract(soup, ".recipe-notes", [".recipe-note"], [], False)
+    def notes(self) -> SubheadingGroup:
+        sections = self.extract(".recipe-note", root=".recipe-notes")
 
-        headings = [extract_one(section, None, ["h2"], []) for section in sections]
-        headings = [re.sub(":$", "", heading, re.I) for heading in headings]
-        notes = [extract(section, None, [".paragraph"], []) for section in sections]
+        headings: list[str | None] = []
+        notes = []
+        for section in sections:
+            handler = RecipeHandler(section)
+            tag = handler.extract_one("h2")
+            if tag:
+                headings.append(re.sub(":$", "", tag.text.strip()))
+            else:
+                headings.append(None)
 
-        return {heading: note for heading, note in zip(headings, notes)}
+            notes_tags = handler.extract(".paragraph")
+            notes.append([note.text.strip() for note in notes_tags])
 
-    def author(self, soup: NavigableString) -> NavigableString:
-        return extract_one(soup, ".author", [".author-name"], [])
+        return dict(zip(headings, notes))
+
+    def author(self) -> str:
+        author_tag = self.extract_one(".author-name")
+        if author_tag:
+            return author_tag.text.strip()
+        return ""

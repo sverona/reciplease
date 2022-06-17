@@ -1,60 +1,64 @@
 import re
 
-from bs4 import NavigableString
-
-from .handler import RecipeHandler, split_into_subheads
-from .extract import extract, extract_one
+from . import RecipeHandler, split_into_subheadings, SubheadingGroup
 
 
 class KingArthurHandler(RecipeHandler):
-    regexes = {r"kingarthurbaking\.com": "King Arthur Baking"}
+    """Handler for recipes from kingarthurbaking.com.
+    """
 
-    def __init__(self):
-        super().__init__()
+    def title(self) -> str:
+        header = self.extract_one("h1", root="page-content-header")
 
-    def title(self, soup: NavigableString) -> NavigableString:
-        header = soup.find("section", class_="page-content-header")
+        if header:
+            return header.text.strip()
+        return ""
 
-        h1 = header.find("h1")
-
-        return h1.text.strip()
-
-    def author(self, soup: NavigableString) -> NavigableString:
-        author = extract_one(soup, ".article__author", [], [])
+    def author(self) -> str:
+        author = self.extract_one(".article__author")
         if author:
-            return re.sub(r"^By\s+", "", author).strip()
+            return re.sub(r"^By\s+", "", author.text).strip()
+        return ""
+
+    def source(self) -> str:
         return "King Arthur Baking"
 
-    def ingredients(self, soup: NavigableString) -> NavigableString:
+    def ingredients(self) -> SubheadingGroup:
         ingredients = {}
-        subheads = extract(soup, ".ingredients-list", [".ingredient-section"], [], False)
+        subheads = self.extract(".ingredient-section", root=".ingredients-list")
         for subhead in subheads:
-            if subhead.find("p"):
-                title = subhead.find("p").text
+            paragraph = subhead.find("p")
+            if paragraph:
+                title = paragraph.text
             else:
-                title = ''
+                title = None
             ingredients[title] = [li.text.strip() for li in subhead("li")]
         return ingredients
 
-    def instructions(self, soup: NavigableString) -> NavigableString:
-        instructions = extract(soup, ".field--recipe-steps", ["ol li", "ul li"], ["li aside", ".share"])
+    def instructions(self) -> SubheadingGroup:
+        instructions_tags = self.extract(["ol li", "ul li"],
+                                         remove=["li aside", "share"],
+                                         root=".field--recipe-steps")
+        instructions = [li.text.strip() for li in instructions_tags]
+        return split_into_subheadings(instructions)
 
-        return split_into_subheads(instructions)
+    def yield_(self) -> str:
+        span = self.extract_one(".stat__item--yield span")
+        if span:
+            return span.text.strip()
+        return ""
 
-    def yield_(self, soup: NavigableString) -> NavigableString:
-        box = soup.find(True, class_="stat__item--yield")
+    def time(self) -> dict[str, str]:
+        times_tags = self.extract(".stat__item span", root=".stats--recipe")
+        labels_tags = self.extract(".stat__item .label", root=".stats--recipe")
 
-        span = box.find("span")
+        labels = [label.text.strip() for label in labels_tags]
+        times = [time.text.strip() for time in times_tags]
 
-        return span.text.strip()
+        return dict(zip(labels, times))
 
-    def time(self, soup: NavigableString) -> NavigableString:
-        times = extract(soup, ".stats--recipe", [".stat__item span"], [])
-        labels = extract(soup, ".stats--recipe", [".stat__item .label"], [])
+    def notes(self) -> SubheadingGroup:
+        notes_tags = self.extract([".recipe__tips ul li", ".ingredient-section__footnote"])
+        notes = [note.text.strip() for note in notes_tags]
 
-        return {label: time for label, time in zip(labels, times)}
-
-    def notes(self, soup: NavigableString) -> NavigableString:
-        notes = extract(soup, None, [".recipe__tips ul li", ".ingredient-section__footnote"], [])
-
-        return notes
+        return {'Notes': notes}

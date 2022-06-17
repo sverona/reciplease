@@ -1,90 +1,149 @@
 import re
+from unicodedata import normalize
 
-from bs4 import NavigableString
+from bs4 import Tag
 
-from .handler import RecipeHandler, split_into_subheads
+from . import RecipeHandler, SubheadingGroup
 
 
-class WordpressTastyHandler(RecipeHandler):
-    regexes = {
-        r"sallysbakingaddiction\.com": "Sally's Baking Addiction",
-        r"thymetochange\.com": "Thyme To Change",
-    }
+class WordpressTastyV3Handler(RecipeHandler):
+    """Handler for recipes from WordPress blogs that use Tasty Recipes V3.
+    """
 
-    def __init__(self):
-        super(RecipeHandler, self).__init__()
+    def title(self) -> str:
+        heading = self.extract_one(".tasty-recipes-title")
 
-    def title(self, soup: NavigableString) -> NavigableString:
-        h1 = soup.find(True, class_="tasty-recipes-title")
+        if heading:
+            return heading.text.strip()
+        return ""
 
-        return h1.text.strip()
-
-    def author(self, soup: NavigableString) -> NavigableString:
-        author_name = soup.find(True, class_="tasty-recipes-author-name")
+    def author(self) -> str:
+        author_name = self.extract_one(".tasty-recipes-author-name")
 
         if author_name:
             return author_name.text.strip()
         return ""
 
-    def yield_(self, soup: NavigableString) -> NavigableString:
-        recipe_servings = soup.find(True, class_="tasty-recipes-yield")
+    def source(self) -> str:
+        site_name = self.soup.find("meta", attrs={"property": "og:site_name"})
 
-        for tag in recipe_servings.find_all(True, class_="tasty-recipes-yield-scale"):
-            tag.extract()
+        if isinstance(site_name, Tag):
+            content = site_name.attrs["content"]
+            if isinstance(content, str):
+                return content
+            return ", ".join(content)
+        return ""
 
-        text = recipe_servings.text.strip()
+    def yield_(self) -> str:
+        yield_tag = self.extract_one(".tasty-recipes-yield", remove=".tasty-recipes-yield-scale")
 
-        if re.fullmatch(r"\d+", text):
-            return f"{text} servings"
+        if yield_tag:
+            return yield_tag.text.strip()
+        return ""
 
-        return text
+    def time(self) -> dict[str, str]:
+        section = self.extract_one(".tasty-recipes-details")
 
-    def ingredients(self, soup: NavigableString) -> NavigableString:
-        div = soup.find(True, class_="tasty-recipes-ingredients")
+        if section:
+            values_tags = section.find_all(class_=re.compile("tasty-recipes-[a-z]+-time"))
+            values = [value.text.strip() for value in values_tags]
 
-        result = {}
+            labels_tags = section.select(".tasty-recipes-label")
+            labels = [re.sub(" Time:$", "", label.text.strip())
+                      for label in labels_tags
+                      if re.search(" Time:$", label.text.strip())]
 
-        def is_actual_ingredients_container(tag):
-            return any(t.name in ["ol", "ul"] for t in tag.children)
+            acceptable_labels = ["Cook", "Prep", "Additional", "Total"]
+            pairs = {label: value
+                     for label, value in zip(labels, values)
+                     if label in acceptable_labels}
 
-        ingredients_container = div.find(is_actual_ingredients_container, class_="tasty-recipes-ingredients-body")
+            return pairs
+        return {}
 
-        name = ""
-        for tag in ingredients_container.children:
-            if tag.name == "ul" or tag.name == "ol":
-                ingredients = tag.find_all("li")
-                ingredients = [li.text.strip() for li in ingredients]
+    def ingredients(self) -> SubheadingGroup:
+        ingredients_tags = self.extract(".tasty-recipes-ingredients li")
+        ingredients = [li.text.strip() for li in ingredients_tags]
+        return {None: ingredients}
 
-                result[name] = ingredients
-                name = ""
-            elif not isinstance(tag, NavigableString):
-                name = tag.text.strip()
+    def instructions(self) -> SubheadingGroup:
+        instructions_tags = self.extract(".tasty-recipes-instructions li")
+        instructions = [li.text.strip() for li in instructions_tags]
+        return {None: instructions}
 
-        return result
+    def notes(self) -> SubheadingGroup:
+        notes_tags = self.extract(".tasty-recipes-notes p")
+        notes = [p.text.strip() for p in notes_tags]
+        return {None: notes}
 
-    def instructions(self, soup: NavigableString) -> NavigableString:
-        instructions = soup.find(True, class_="tasty-recipes-instructions-body")
-        instructions = [li.text.strip() for li in instructions.find_all("li")]
 
-        return split_into_subheads(instructions)
+class WordpressTastyPreV3Handler(RecipeHandler):
+    """Handler for recipes from WordPress blogs that use Tasty Recipes pre-V3.
+    """
 
-    def total_time(self, soup: NavigableString) -> NavigableString:
-        recipe_time = soup.find(True, class_="tasty-recipes-total-time")
+    def title(self) -> str:
+        heading = self.extract_one(".tasty-recipes-title")
+        if heading:
+            return heading.text.strip()
+        return ""
 
-        return recipe_time.text.strip()
+    def author(self) -> str:
+        author = self.extract_one(".tasty-recipes-author-name")
+        if author:
+            return author.text.strip()
+        return ""
 
-    def active_time(self, soup: NavigableString) -> NavigableString:
-        recipe_time = soup.find(True, class_="tasty-recipes-prep-time")
+    def source(self) -> str:
+        site_name = self.soup.find("meta", attrs={"property": "og:site_name"})
 
-        return recipe_time.text.strip()
+        if isinstance(site_name, Tag):
+            content = site_name.attrs["content"]
+            if isinstance(content, str):
+                return content
+            return ", ".join(content)
+        return ""
 
-    def notes(self, soup: NavigableString) -> NavigableString:
-        div = soup.find(True, class_="tasty-recipes-notes")
+    def yield_(self) -> str:
+        yield_ = self.extract_one(".tasty-recipes-yield",
+                                  remove=".tasty-recipes-yield-scale")
 
-        print(div)
+        if yield_:
+            return yield_.text.strip()
+        return ""
 
-        if div:
-            print(div.find_all("p"))
-            return [p.text.strip() for p in div.find_all(["p", "li"])]
+    def ingredients(self) -> SubheadingGroup:
+        # I know of no recipe containing ingredient groups
+        ingredients_tags = self.extract(".tasty-recipe-ingredients li")
+        ingredients = [li.text.strip() for li in ingredients_tags]
+        return {None: ingredients}
 
-        return []
+    def instructions(self) -> SubheadingGroup:
+        instructions_tags = self.extract(".tasty-recipe-instructions li")
+        instructions = [li.text.strip() for li in instructions_tags]
+        return {None: instructions}
+
+    def notes(self) -> SubheadingGroup:
+        notes_tags = self.extract(".tasty-recipes-notes-body", root=".tasty-recipes-notes")
+        notes = [normalize("NFKC", p.text.strip()) for p in notes_tags]
+        return {None: notes}
+
+    def time(self) -> dict[str, str]:
+        section = self.extract_one(".tasty-recipes-details")
+
+        if section:
+            values_tags = section.find_all(class_=re.compile("tasty-recipes-[a-z]+-time"))
+            values = [value.text.strip() for value in values_tags]
+
+            labels_tags = section.select(".tasty-recipes-label")
+            labels = [re.sub(" Time:$", "", label.text.strip())
+                      for label in labels_tags
+                      if re.search(" Time:$", label.text.strip())]
+
+            acceptable_labels = ["Cook", "Prep", "Additional", "Total"]
+            pairs = {label: value
+                     for label, value in zip(labels, values)
+                     if label in acceptable_labels}
+
+            return pairs
+        return {}
+
