@@ -43,7 +43,6 @@ def from_url(url: str) -> Recipe:
     for handler in handlers:
         try:
             recipe = Recipe(soup, handler)
-            print(url, handler, recipe.ingredients, recipe.instructions)
             if recipe.ingredients and recipe.instructions:
                 break
         except:  # pylint:disable=bare-except
