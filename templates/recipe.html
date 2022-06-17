@@ -3,50 +3,63 @@
 
 <main>
   <header>
-    <h1>{{ recipe.title }}</h1>
-      <span class="byline">
-        {{recipe.author}} <span>|</span> {{recipe.source}}
-      </span>
-      <ul class="metadata">
-        <li class="yield"> Yields {{ recipe.yield_ }}</li>
-        {% for label, time in recipe.time.items() %}
-        <li class="time">{{ label.capitalize() }} time: {{ time }} </li>
-        {% endfor %}
-      </ul>
+    <div class="title-author">
+      <h1>{{ recipe.title }}</h1>
+        <span class="byline">
+        {% if not recipe.author %}
+          {{ recipe.source }}
+        {% else %}
+          {{recipe.author}} <span>|</span> {{recipe.source}}
+        {% endif %}
+        </span>
+    </div>
+    <ul class="metadata">
+      <li class="yield"> Yields {{ recipe.yield_ }}</li>
+      {% for label, time in recipe.time.items() %}
+      <li class="time">{{ label.capitalize() }} time: {{ time }} </li>
+      {% endfor %}
+    </ul>
   </header>
   <article>
-    <section id="ingredients">
-      <h2>Ingredients</h2>
-      {% for section, ingredient_list in recipe.ingredients.items() %}
-      {% if section %}<h3>{{ section }}</h3>{% endif %}
-      <ul>
-        {% for ingredient in ingredient_list %}
-        <li>{{ ingredient }}</li>
-        {% endfor %}
-      </ul>
-      {% endfor %}
-      </ul>
-    </section>
     <section id="instructions">
       <h2>Instructions</h2>
       {% for section, instruction_list in recipe.instructions.items() %}
       {% if section %}<h3>{{ section }}</h3>{% endif %}
-      <ol>
-        {% for instruction in instruction_list %}
-        <li>{{ instruction }}</li>
-        {% endfor %}
-      </ol>
+      {% if instruction_list | length == 1 %}
+        <p>{{ instruction_list[0] | wrap_fractions | safe }}</p>
+      {% else %}
+        <ol>
+          {% for instruction in instruction_list %}
+          <li>{{ instruction | wrap_fractions | safe }}</li>
+          {% endfor %}
+        </ol>
+      {% endif %}
       {% endfor %}
+    </section>
+    <section id="ingredients">
+      {% for section, ingredient_list in recipe.ingredients.items() %}
+      {% if section %}<h3>{{ section }}</h3>{% endif %}
+      <ul>
+        {% for ingredient in ingredient_list %}
+        <li>{{ ingredient | wrap_fractions | safe }}</li>
+        {% endfor %}
+      </ul>
+      {% endfor %}
+      </ul>
     </section>
     {% if recipe.notes %}
     <section id="notes">
         {% for section, note_list in recipe.notes.items() %}
-        {% if section %}<h2>{{ section or "Notes" }}</h2>{% endif %}
+        {% if note_list %}<h2>{{ section or "Notes" }}</h2>{% endif %}
+        {% if note_list | length == 1 %}
+        <p>{{ note_list[0] | wrap_fractions | safe }}</p>
+        {% else %}
         <ol>
           {% for note in note_list %}
-          <li>{{ note }}</li>
+          <li>{{ note | wrap_fractions | safe }}</li>
           {% endfor %}
         </ol>
+        {% endif %}
         {% endfor %}
     </section>
     {% endif %}

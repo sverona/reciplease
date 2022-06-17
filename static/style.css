@@ -1,36 +1,34 @@
-@font-face {
-  font-family: 'Merriweather';
-
-  src: url('fonts/Merriweather.ttf') format('truetype-variations');
-
-  font-weight: 100 900;
-  font-style: normal;
-}
-
 * {
   box-sizing: border-box;
 }
 
 html {
-  font-family: 'Merriweather';
-  font-weight: 300;
+  font-family: 'Source Serif Pro';
   font-size: 16px;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 body {
-  max-width: 900px;
+  max-width: 8.5in;
   margin: auto;
+  padding: 0 .5in;
 }
 
-article {
+header, article {
+  margin-bottom: 1.5rem;
   display: grid;
-  grid-template-columns: 1fr 1.55fr;
-  grid-gap: 0 5rem;
+  grid-template-columns: 1.6fr 1fr;
+  grid-gap: 0 3rem;
   font-variant-numeric: tabular-nums;
+  overflow: visible;
+}
+
+#ingredients, #notes {
+  grid-column: 2;
 }
 
 #instructions {
+  grid-column: 1;
   grid-row: span 3;
 }
 
@@ -42,12 +40,36 @@ article {
   color: #444;
 }
 
-h1, .byline, h2, h3 {
+h1, h2, h3 {
+  font-family: 'DM Serif Display';
+  font-weight: 400;
+  margin-block-end: -0.5rem;
+  line-height: 1.2;
+}
+
+h1 {
+  margin-block: 0 0.5rem;
+  font-size: 2.5rem;
+}
+
+h2 {
+  margin-block-start: 0;
+  font-size: 1.875rem;
+}
+
+h3 {
+  font-size: 1.4rem;
+}
+
+#ingredients h3:first-of-type {
+  margin-block-start: 0;
+}
+
+.byline {
   font-variant: all-small-caps;
   display: block;
-  letter-spacing: .15em;
-
-  text-align: center;
+  letter-spacing: .07rem;
+  font-size: 1.125rem;
 
   line-height: 1;
 }
@@ -56,37 +78,39 @@ h1, .byline, h2, h3 {
   vertical-align: middle;
 }
 
-h1, h2, h3 {
-  font-weight: 400;
-}
 
-
-header {
-  overflow: auto;
-
+.title-author {
+  float: left;
 }
 
 .metadata {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  margin-block-start: 1rem;
+  float: right;
+  font-variant: all-small-caps;
+  letter-spacing: 0.05rem;
+  line-height: 1.3;
+}
+
+.metadata li {
+  padding-left: 3ch;
+  text-indent: -3ch;
+  margin-bottom: .25rem;
 }
 
 ul, ol {
-  margin-top: 0;
   padding: 0;
 }
 
-h1 {
-  font-weight: 400;
-  margin-block-end: 0.25rem;
+
+#instructions li  {
+  margin-block: 1rem;
 }
 
-
-p, li {
-  margin-block: 0.5rem;
+#ingredients li {
+  margin-block: 0.25rem;
+  padding-left: 3ch;
+  text-indent: -3ch;
 }
+
 
 li::marker {
   color: #777;
