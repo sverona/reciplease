@@ -1,3 +1,5 @@
+import re
+
 from flask import Flask, render_template, request, redirect
 from requests.models import PreparedRequest
 import requests.exceptions
@@ -5,6 +7,11 @@ import requests.exceptions
 from scrape import url_to_recipe
 
 app = Flask(__name__)
+
+
+@app.template_filter()
+def wrap_fractions(text):
+    return re.sub(r"(?:(\d+)\s+)?(\d+/\d+)", r'\1<span class="frac">\2</span>', text)
 
 
 @app.route('/')

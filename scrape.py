@@ -1,90 +1,60 @@
-from dataclasses import dataclass, field
-from re import sub
 from sys import argv
 
 from bs4 import BeautifulSoup
 import requests as r
 
-from typing import List, Tuple
-
+from handlers import Recipe
 from handlers.seriouseats import SeriousEatsHandler
 from handlers.allrecipes import AllrecipesHandler
 from handlers.kingarthur import KingArthurHandler
 from handlers.tasty import TastyHandler
 from handlers.wordpress import WordpressHandler
-from handlers.wordpress_tasty import WordpressTastyHandler
+from handlers.wordpress_tasty import WordpressTastyV3Handler
 
-
-@dataclass
-class Amount:
-    field: int
-    unit: str
-
-
-@dataclass
-class Recipe:
-    active_time: int = 0
-    yield_: [int, str] = 0
-
-    ingredients: List[Tuple[Amount, str]] = field(default_factory=list)
-
-    instructions: List[str] = field(default_factory=list)
-
-    notes: List[str] = field(default_factory=list)
-
-
-handlers = [SeriousEatsHandler,
-            AllrecipesHandler,
-            KingArthurHandler,
-            TastyHandler,
-            WordpressHandler,
-            WordpressTastyHandler
-            ]
-
-
-def url_to_recipe(url: str) -> Recipe:
+def get_soup(url: str) -> BeautifulSoup:
+    """cURL the provided `url`.
+    """
 
     headers = {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:88.0) Gecko/20100101 Firefox/88.0"
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:88.0)"
+                      "Gecko/20100101 Firefox/88.0"
     }
     req = r.get(url, headers=headers)
     if req.status_code != 200:
-        print(f"Error {req.status_code}")
-        raise Exception
+        raise Exception(f"Error {req.status_code}")
 
     raw_html = req.text
-    soup = BeautifulSoup(raw_html, "html.parser")
+    return BeautifulSoup(raw_html, "html.parser")
 
-    handler = None
-    handler_found = False
-    for h in handlers:
-        handler = h()
+
+def from_url(url: str) -> Recipe:
+    """Parse a recipe from a given URL.
+    """
+
+    handlers = [SeriousEatsHandler,
+                AllrecipesHandler,
+                KingArthurHandler,
+                TastyHandler,
+                WordpressHandler,
+                WordpressTastyV3Handler
+                ]
+
+    soup = get_soup(url)
+    for handler in handlers:
         try:
-            if handler.instructions(soup) and handler.ingredients(soup):
-                handler_found = True
+            recipe = Recipe(soup, handler)
+            print(url, handler, recipe.ingredients, recipe.instructions)
+            if recipe.ingredients and recipe.instructions:
                 break
-        except:
+        except:  # pylint:disable=bare-except
             pass
-
-    if not handler_found:
+    else:
         raise Exception("No usable handler found.")
-
-    recipe = Recipe()
-
-    recipe.title = h().title(soup)
-    recipe.author = h().author(soup)
-    recipe.source = h().source(soup)
-    recipe.ingredients = h().ingredients(soup)
-    recipe.instructions = h().instructions(soup)
-    recipe.yield_ = h().yield_(soup)
-    recipe.notes = h().notes(soup)
-    recipe.time = h().time(soup)
 
     return recipe
 
-
-if __name__ == "__main__":
-    recipe = url_to_recipe(argv[1])
+def __main__():
+    recipe = from_url(argv[1])
 
     print(recipe.title)
 
@@ -104,3 +74,6 @@ if __name__ == "__main__":
         for i, inst in enumerate(insts):
             if inst:
                 print(f"{i + 1}. {inst}")
+
+if __name__ == "__main__":
+    __main__()
