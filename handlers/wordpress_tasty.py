@@ -1,5 +1,4 @@
 import re
-from unicodedata import normalize
 
 from bs4 import Tag
 
@@ -55,17 +54,23 @@ class WordpressTastyV3Handler(RecipeHandler):
     def ingredients(self) -> SubheadingGroup:
         ingredients_tags = self.extract(".tasty-recipes-ingredients li")
         ingredients = [text(li) for li in ingredients_tags]
-        return {None: ingredients}
+        if ingredients:
+            return {None: ingredients}
+        return {}
 
     def instructions(self) -> SubheadingGroup:
         instructions_tags = self.extract(".tasty-recipes-instructions li")
         instructions = [text(li) for li in instructions_tags]
-        return {None: instructions}
+        if instructions:
+            return {None: instructions}
+        return {}
 
     def notes(self) -> SubheadingGroup:
         notes_tags = self.extract(".tasty-recipes-notes p")
         notes = [text(p) for p in notes_tags]
-        return {None: notes}
+        if notes:
+            return {None: notes}
+        return {}
 
 
 class WordpressTastyPreV3Handler(WordpressTastyV3Handler):
@@ -75,9 +80,13 @@ class WordpressTastyPreV3Handler(WordpressTastyV3Handler):
         # I know of no recipe containing ingredient groups
         ingredients_tags = self.extract(".tasty-recipe-ingredients li")
         ingredients = [text(li) for li in ingredients_tags]
-        return {None: ingredients}
+        if ingredients:
+            return {None: ingredients}
+        return {}
 
     def instructions(self) -> SubheadingGroup:
         instructions_tags = self.extract(".tasty-recipe-instructions li")
         instructions = [text(li) for li in instructions_tags]
-        return {None: instructions}
+        if instructions:
+            return {None: instructions}
+        return {}
