@@ -103,13 +103,19 @@ class RecipeHandler:
             return elements[0]
         return None
 
-def text(tag: Tag | NavigableString | None) -> str:
+
+def text(tag: Tag | NavigableString | None, squeeze: bool = False) -> str:
     """Return the normalized, stripped text of an HTML `tag`, or the empty
     string if `tag` is `None`.
+
+    The optional `squeeze` argument replaces all contiguous strings of
+    whitespace with single spaces if true.
     """
     if not tag:
         return ""
     text_ = tag.text.strip()
+    if squeeze:
+        text_ = re.sub(r"\s+", " ", text_)
     if unicodedata.is_normalized("NFKC", text_):
         return text_
     return unicodedata.normalize("NFKC", text_)
