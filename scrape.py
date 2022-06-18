@@ -7,6 +7,7 @@ from handlers import Recipe
 from handlers.seriouseats import SeriousEatsHandler
 from handlers.allrecipes import AllrecipesHandler
 from handlers.bbc import BBCHandler
+from handlers.delish import DelishHandler
 from handlers.kingarthur import KingArthurHandler
 from handlers.tasty import TastyHandler
 from handlers.wordpress import WordpressHandler
@@ -38,7 +39,8 @@ def from_url(url: str) -> Recipe:
                 TastyHandler,
                 WordpressHandler,
                 WordpressTastyV3Handler,
-                BBCHandler
+                BBCHandler,
+                DelishHandler
                 ]
 
     soup = get_soup(url)

@@ -38,19 +38,23 @@
 ## Tasty
 - tasty.co
 
+## Delish
+- delish.com
+
+## BBC
+- bbcgoodfood.com
+
 # Not added yet
 
 ## Custom
 - foodnetwork.com
 - epicurious.com
-- delish.com
 - pillsbury.com
 - thepioneerwoman.com
 - food52.com
 - themodernproper.com
 - marthastewart.com
 - goodhousekeeping.com
-- bbcgoodfood.com
 - inspiredtaste.net (https://www.inspiredtaste.net/wp-content/plugins/inspiredtasterecipe/readme.txt)
 
 ## Blog-style
