@@ -10,7 +10,7 @@ html {
 
 body {
   max-width: 8.5in;
-  margin: auto;
+  margin: 1.5rem auto;
   padding: 0 .5in;
 }
 
@@ -30,6 +30,10 @@ header, article {
 #instructions {
   grid-column: 1;
   grid-row: span 3;
+}
+
+#notes {
+  font-size: small;
 }
 
 .frac {
@@ -151,3 +155,4 @@ header div span:not(:last-of-type):after {
   margin-left: 0;
   width: 30ch;
 }
+
