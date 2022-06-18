@@ -6,6 +6,7 @@ import requests as r
 from handlers import Recipe
 from handlers.seriouseats import SeriousEatsHandler
 from handlers.allrecipes import AllrecipesHandler
+from handlers.bbc import BBCHandler
 from handlers.kingarthur import KingArthurHandler
 from handlers.tasty import TastyHandler
 from handlers.wordpress import WordpressHandler
@@ -36,12 +37,14 @@ def from_url(url: str) -> Recipe:
                 KingArthurHandler,
                 TastyHandler,
                 WordpressHandler,
-                WordpressTastyV3Handler
+                WordpressTastyV3Handler,
+                BBCHandler
                 ]
 
     soup = get_soup(url)
     for handler in handlers:
         try:
+            print(handler)
             recipe = Recipe(soup, handler)
             if recipe.ingredients and recipe.instructions:
                 break
