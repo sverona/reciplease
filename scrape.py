@@ -4,15 +4,7 @@ from bs4 import BeautifulSoup
 import requests as r
 
 from handlers import Recipe
-from handlers.allrecipes import AllrecipesHandler
-from handlers.bbc import BBCHandler
-from handlers.delish import DelishHandler
-from handlers.epicurious import EpicuriousHandler
-from handlers.kingarthur import KingArthurHandler
-from handlers.seriouseats import SeriousEatsHandler
-from handlers.tasty import TastyHandler
-from handlers.wordpress import WordpressHandler
-from handlers.wordpress_tasty import WordpressTastyV3Handler
+from handlers.all import ALL_HANDLERS
 
 
 def get_soup(url: str) -> BeautifulSoup:
@@ -33,20 +25,8 @@ def get_soup(url: str) -> BeautifulSoup:
 def from_url(url: str) -> Recipe:
     """Parse a recipe from a given URL.
     """
-
-    handlers = [SeriousEatsHandler,
-                AllrecipesHandler,
-                KingArthurHandler,
-                TastyHandler,
-                WordpressHandler,
-                WordpressTastyV3Handler,
-                BBCHandler,
-                DelishHandler,
-                EpicuriousHandler
-                ]
-
     soup = get_soup(url)
-    for handler in handlers:
+    for handler in ALL_HANDLERS:
         recipe = Recipe(soup, handler)
         if recipe.ingredients and recipe.instructions:
             return recipe
