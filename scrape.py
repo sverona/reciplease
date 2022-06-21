@@ -23,11 +23,10 @@ def get_soup(url: str) -> BeautifulSoup:
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:88.0)"
                       "Gecko/20100101 Firefox/88.0"
     }
-    req = r.get(url, headers=headers)
-    if req.status_code != 200:
-        raise Exception(f"Error {req.status_code}")
+    resp = r.get(url, headers=headers)
+    resp.raise_for_status()
 
-    raw_html = req.text
+    raw_html = resp.text
     return BeautifulSoup(raw_html, "html.parser")
 
 
@@ -42,24 +41,19 @@ def from_url(url: str) -> Recipe:
                 WordpressHandler,
                 WordpressTastyV3Handler,
                 BBCHandler,
-                DelishHandler
+                DelishHandler,
+                EpicuriousHandler
                 ]
 
     soup = get_soup(url)
     for handler in handlers:
-        try:
-            print(handler)
-            recipe = Recipe(soup, handler)
-            if recipe.ingredients and recipe.instructions:
-                break
-        except:  # pylint:disable=bare-except
-            pass
-    else:
-        raise Exception("No usable handler found.")
+        recipe = Recipe(soup, handler)
+        if recipe.ingredients and recipe.instructions:
+            return recipe
+    raise Exception("No usable handler found.")
 
-    return recipe
 
-def __main__():
+def main():
     recipe = from_url(argv[1])
 
     print(recipe.title)
@@ -81,5 +75,6 @@ def __main__():
             if inst:
                 print(f"{i + 1}. {inst}")
 
+
 if __name__ == "__main__":
-    __main__()
+    main()

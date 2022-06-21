@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup, NavigableString, Tag
 
 SubheadingGroup = dict[str | None, list[str]]
 
+
 class RecipeHandler:
     """Abstract class for recipe parsers.
     """
@@ -64,7 +65,7 @@ class RecipeHandler:
 
     def extract(self,
                 keep: str | Iterable[str],
-                remove: str | Iterable[str] | None=None,
+                remove: str | Iterable[str] | None = None,
                 root=None
                 ) -> list[Tag]:
         """Extract all elements in `self.soup` matching any selector in `keep`,
@@ -83,7 +84,7 @@ class RecipeHandler:
             if isinstance(remove, str):
                 for to_remove in root_element.select(remove):
                     to_remove.extract()
-            elif remove: # remove is Iterable[str]
+            elif remove:  # remove is Iterable[str]
                 for to_remove in root_element.select(",".join(remove)):
                     to_remove.extract()
 
@@ -120,6 +121,7 @@ def text(tag: Tag | NavigableString | None, squeeze: bool = False) -> str:
         return text_
     return unicodedata.normalize("NFKC", text_)
 
+
 def split_into_subheadings(list_to_split: list[str], regex=r"[^.]+:") -> SubheadingGroup:
     """Split a list of strings (say, of instructions or ingredients) which
     may contain subheadings (say, "To make the dough:") into a dict mapping
@@ -143,6 +145,7 @@ def split_into_subheadings(list_to_split: list[str], regex=r"[^.]+:") -> Subhead
                 subheads[this_subhead] = []
             subheads[this_subhead].append(item.strip())
     return subheads
+
 
 @dataclass
 class Recipe:
