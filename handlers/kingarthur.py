@@ -19,7 +19,9 @@ class KingArthurHandler(RecipeHandler):
 
     def ingredients(self) -> SubheadingGroup:
         ingredients = {}
-        subheads = self.extract(".ingredient-section", root=".ingredients-list")
+        subheads = self.extract(
+            ".ingredient-section", root=".ingredients-list"
+        )
         for subhead in subheads:
             paragraph = subhead.find("p")
             if paragraph:

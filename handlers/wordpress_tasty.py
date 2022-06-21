@@ -83,6 +83,10 @@ class WordpressTastyV3Handler(RecipeHandler):
 class WordpressTastyPreV3Handler(WordpressTastyV3Handler):
     """Handler for recipes from WordPress blogs that use Tasty Recipes pre-V3."""
 
+    def title(self) -> str:
+        tag = self.extract_one(".tasty-recipes h2")
+        return text(tag)
+
     def ingredients(self) -> SubheadingGroup:
         # I know of no recipe containing ingredient groups
         ingredients_tags = self.extract(".tasty-recipe-ingredients li")

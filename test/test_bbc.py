@@ -12,7 +12,10 @@ class TestBBC:
 
     def test_title(self):
         """...properly scrape the title."""
-        assert self.recipe.title == "Red lentil pasta with creamy tomato & pepper sauce"
+        assert (
+            self.recipe.title
+            == "Red lentil pasta with creamy tomato & pepper sauce"
+        )
 
     def test_author(self):
         """...properly scrape the author."""
@@ -32,7 +35,9 @@ class TestBBC:
 
     def test_ingredients(self):
         """...properly scrape ingredients."""
-        assert "4 sundried tomatoes" in self.recipe.ingredients["For the sauce"]
+        assert (
+            "4 sundried tomatoes" in self.recipe.ingredients["For the sauce"]
+        )
 
     def test_instructions(self):
         """...properly scrape instructions."""

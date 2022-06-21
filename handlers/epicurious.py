@@ -39,7 +39,9 @@ class EpicuriousHandler(RecipeHandler):
     def instructions(self) -> SubheadingGroup:
         instructions = {}
 
-        sections = self.soup.find_all(class_=re.compile("^InstructionGroupWrapper.*"))
+        sections = self.soup.find_all(
+            class_=re.compile("^InstructionGroupWrapper.*")
+        )
         for section in sections:
             title = re.sub(":$", "", text(section.h3)) or None
             these_instructions = section.find_all(

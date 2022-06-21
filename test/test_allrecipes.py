@@ -18,8 +18,14 @@ class TestAllrecipes:
     def test_ingredients(self):
         """...properly scrape ingredients."""
 
-        assert "1 cup tomato sauce" in self.recipe.ingredients["Taco Meat Stuffing"]
-        assert "4 large zucchini, halved lengthwise" in self.recipe.ingredients["Rest"]
+        assert (
+            "1 cup tomato sauce"
+            in self.recipe.ingredients["Taco Meat Stuffing"]
+        )
+        assert (
+            "4 large zucchini, halved lengthwise"
+            in self.recipe.ingredients["Rest"]
+        )
 
     def test_instructions(self):
         """...properly scrape instructions."""

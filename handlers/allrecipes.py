@@ -32,14 +32,18 @@ class AllrecipesHandler(RecipeHandler):
         ingredients: SubheadingGroup = {}
         for heading, section in zip(headings, sections):  # type: ignore
             these_ingredients = RecipeHandler(section).extract("li")
-            ingredients[heading] = [text(ing) for ing in these_ingredients if ing]
+            ingredients[heading] = [
+                text(ing) for ing in these_ingredients if ing
+            ]
 
         return ingredients
 
     def instructions(self) -> SubheadingGroup:
         # I was unable to find a recipe on this site with distinct sections or section headings.
         # If you find one, please open a PR. SVM
-        steps_tags = self.extract(".section-body", root=".instructions-section")
+        steps_tags = self.extract(
+            ".section-body", root=".instructions-section"
+        )
         steps = [text(step) for step in steps_tags]
 
         return {None: steps}
@@ -55,7 +59,9 @@ class AllrecipesHandler(RecipeHandler):
         values = [text(value) for value in values_tags]
         labels = [re.sub(":$", "", text(label)) for label in labels_tags]
 
-        pairs = {label.capitalize(): value for label, value in zip(labels, values)}
+        pairs = {
+            label.capitalize(): value for label, value in zip(labels, values)
+        }
 
         if "Yield" in pairs.keys():
             return pairs["Yield"]

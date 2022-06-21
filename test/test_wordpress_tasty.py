@@ -1,5 +1,8 @@
 from handlers import Recipe
-from handlers.wordpress_tasty import WordpressTastyV3Handler, WordpressTastyPreV3Handler
+from handlers.wordpress_tasty import (
+    WordpressTastyV3Handler,
+    WordpressTastyPreV3Handler,
+)
 from scrape import get_soup
 
 
@@ -75,7 +78,11 @@ class TestWordpressTastyPreV3:
 
     def test_time(self):
         """...properly parse times into a dict."""
-        expected = {"Prep": "2 minutes", "Cook": "5 minutes", "Total": "7 minutes"}
+        expected = {
+            "Prep": "2 minutes",
+            "Cook": "5 minutes",
+            "Total": "7 minutes",
+        }
         assert self.recipe.time == expected
 
     def test_yield(self):

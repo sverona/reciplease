@@ -29,7 +29,9 @@ class TestTasty:
 
     def test_ingredients(self):
         """...properly scrape ingredients."""
-        assert "1 tablespoon ginger, crushed" in self.recipe.ingredients["Paneer"]
+        assert (
+            "1 tablespoon ginger, crushed" in self.recipe.ingredients["Paneer"]
+        )
 
     def test_ingredient_sections(self):
         """...properly break ingredients up into sections."""

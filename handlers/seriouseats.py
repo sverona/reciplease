@@ -21,7 +21,9 @@ class SeriousEatsHandler(RecipeHandler):
         return "Serious Eats"
 
     def time(self) -> dict[str, str]:
-        times = self.extract(".meta-text__data", root=".project-meta__times-container")
+        times = self.extract(
+            ".meta-text__data", root=".project-meta__times-container"
+        )
         labels = self.extract(
             ".meta-text__label", root=".project-meta__times-container"
         )
@@ -66,7 +68,9 @@ class SeriousEatsHandler(RecipeHandler):
         return {"": instructions}
 
     def notes(self) -> SubheadingGroup:
-        tags = self.extract(["h2", "h2 + p"], root=".structured-project__steps")
+        tags = self.extract(
+            ["h2", "h2 + p"], root=".structured-project__steps"
+        )
 
         sections = defaultdict(list)
 

@@ -11,7 +11,9 @@ app = Flask(__name__)
 
 @app.template_filter()
 def wrap_fractions(text):
-    return re.sub(r"(?:(\d+)\s+)?(\d+/\d+)", r'\1<span class="frac">\2</span>', text)
+    return re.sub(
+        r"(?:(\d+)\s+)?(\d+/\d+)", r'\1<span class="frac">\2</span>', text
+    )
 
 
 @app.route("/")

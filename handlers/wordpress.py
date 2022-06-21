@@ -104,7 +104,8 @@ class WordpressHandler(RecipeHandler):
 
             labels_tags = section.select(".wprm-recipe-time-label")
             labels = [
-                re.sub(r"( Time)?:?\s*$", "", text(label)) for label in labels_tags
+                re.sub(r"( Time)?:?\s*$", "", text(label))
+                for label in labels_tags
             ]
 
             acceptable_labels = ["cook", "prep", "additional", "total", "rest"]

@@ -13,7 +13,10 @@ from .kingarthur import KingArthurHandler
 from .seriouseats import SeriousEatsHandler
 from .tasty import TastyHandler
 from .wordpress import WordpressHandler
-from .wordpress_tasty import WordpressTastyV3Handler, WordpressTastyPreV3Handler
+from .wordpress_tasty import (
+    WordpressTastyV3Handler,
+    WordpressTastyPreV3Handler,
+)
 
 ALL_HANDLERS = [
     WordpressHandler,

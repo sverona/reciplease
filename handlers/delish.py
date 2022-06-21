@@ -22,7 +22,9 @@ class DelishHandler(RecipeHandler):
         return text(tag, squeeze=True)
 
     def time(self) -> dict[str, str]:
-        tags = self.soup.find_all("span", class_=re.compile("[a-z]+-time-amount"))
+        tags = self.soup.find_all(
+            "span", class_=re.compile("[a-z]+-time-amount")
+        )
 
         times = {}
         for tag in tags:
