@@ -9,11 +9,11 @@ class WordpressHandler(RecipeHandler):
     """Handler for recipes from blogs that use Wordpress Recipe Manager (WPRM).
     """
     def title(self) -> str:
-        title = self.extract_one(".wprm-recipe-name")
+        title = self.extract_one(".wprm-recipe-name", remove=".wprm-recipe-roundup-item")
         return text(title)
 
     def author(self) -> str:
-        author_name = self.extract_one(".entry-author-name")
+        author_name = self.extract_one(".entry-author-name", remove=".wprm-recipe-roundup-item")
         return text(author_name)
 
     def source(self) -> str:
