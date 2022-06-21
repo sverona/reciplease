@@ -6,7 +6,7 @@
     <div class="title-author">
       <h1>{{ recipe.title }}</h1>
         <span class="byline">
-        {% if not recipe.author %}
+        {% if not recipe.author or recipe.author == recipe.source %}
           {{ recipe.source }}
         {% else %}
           {{recipe.author}} <span>|</span> {{recipe.source}}
