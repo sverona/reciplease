@@ -14,8 +14,7 @@ SubheadingGroup = dict[str | None, list[str]]
 
 
 class RecipeHandler:
-    """Abstract class for recipe parsers.
-    """
+    """Abstract class for recipe parsers."""
 
     soup: Tag
 
@@ -23,18 +22,15 @@ class RecipeHandler:
         self.soup = soup
 
     def title(self) -> str:
-        """Return the recipe title.
-        """
+        """Return the recipe title."""
         return ""
 
     def author(self) -> str:
-        """Return the recipe author(s).
-        """
+        """Return the recipe author(s)."""
         return ""
 
     def source(self) -> str:
-        """Return the title of the website the recipe was posted on.
-        """
+        """Return the title of the website the recipe was posted on."""
         return ""
 
     def time(self) -> dict[str, str]:
@@ -44,30 +40,27 @@ class RecipeHandler:
         return {}
 
     def yield_(self) -> str:
-        """Return a string containing the recipe yield.
-        """
+        """Return a string containing the recipe yield."""
         return ""
 
     def ingredients(self) -> SubheadingGroup:
-        """Return a SubheadingGroup containing recipe ingredients.
-        """
+        """Return a SubheadingGroup containing recipe ingredients."""
         return {}
 
     def instructions(self) -> SubheadingGroup:
-        """Return a SubheadingGroup containing recipe instructions.
-        """
+        """Return a SubheadingGroup containing recipe instructions."""
         return {}
 
     def notes(self) -> SubheadingGroup:
-        """Return a SubheadingGroup containing recipe notes.
-        """
+        """Return a SubheadingGroup containing recipe notes."""
         return {}
 
-    def extract(self,
-                keep: str | Iterable[str],
-                remove: str | Iterable[str] | None = None,
-                root=None
-                ) -> list[Tag]:
+    def extract(
+        self,
+        keep: str | Iterable[str],
+        remove: str | Iterable[str] | None = None,
+        root=None,
+    ) -> list[Tag]:
         """Extract all elements in `self.soup` matching any selector in `keep`,
         limited to children of `self.soup.select_one(root)` if `root` is
         provided, removing any elements matching any selector in `remove`.
@@ -96,9 +89,10 @@ class RecipeHandler:
 
         return []
 
-    def extract_one(self, keep: str | Iterable[str], remove=None, root=None) -> Tag | None:
-        """Same as `_extract` but return at most one match.
-        """
+    def extract_one(
+        self, keep: str | Iterable[str], remove=None, root=None
+    ) -> Tag | None:
+        """Same as `_extract` but return at most one match."""
         elements = self.extract(keep, remove, root)
         if elements:
             return elements[0]
@@ -122,7 +116,9 @@ def text(tag: Tag | NavigableString | None, squeeze: bool = False) -> str:
     return unicodedata.normalize("NFKC", text_)
 
 
-def split_into_subheadings(list_to_split: list[str], regex=r"[^.]+:") -> SubheadingGroup:
+def split_into_subheadings(
+    list_to_split: list[str], regex=r"[^.]+:"
+) -> SubheadingGroup:
     """Split a list of strings (say, of instructions or ingredients) which
     may contain subheadings (say, "To make the dough:") into a dict mapping
     those subheadings (or None, for an empty subheading) to the strings they
@@ -149,8 +145,8 @@ def split_into_subheadings(list_to_split: list[str], regex=r"[^.]+:") -> Subhead
 
 @dataclass
 class Recipe:
-    """Data class containing metadata of a recipe.
-    """
+    """Data class containing metadata of a recipe."""
+
     title: str
     author: str
     source: str
@@ -161,8 +157,7 @@ class Recipe:
     notes: SubheadingGroup
 
     def __init__(self, soup: BeautifulSoup, handler_type: type[RecipeHandler]):
-        """Attempt to parse a recipe from a given BeautifulSoup object `soup`.
-        """
+        """Attempt to parse a recipe from a given BeautifulSoup object `soup`."""
 
         handler = handler_type(soup)
 

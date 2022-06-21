@@ -4,8 +4,7 @@ from . import RecipeHandler, SubheadingGroup, text
 
 
 class BBCHandler(RecipeHandler):
-    """Handler for recipes from bbcgoodfood.com.
-    """
+    """Handler for recipes from bbcgoodfood.com."""
 
     def title(self) -> str:
         tag = self.extract_one(".heading-1", root=".headline")
@@ -44,7 +43,9 @@ class BBCHandler(RecipeHandler):
 
         section = self.extract_one(".recipe__method-steps")
         if section:
-            instructions_tags = RecipeHandler(section).extract("li", remove=".heading-6")
+            instructions_tags = RecipeHandler(section).extract(
+                "li", remove=".heading-6"
+            )
             instructions = [text(ins) for ins in instructions_tags]
             return {None: instructions}
         return {}
@@ -54,6 +55,4 @@ class BBCHandler(RecipeHandler):
 
         times = [text(tag) for tag in tags]
         # FIXME This is bad, go by tags instead.
-        return {t.split(":")[0]: t.split(":")[1]
-                for t in times
-                if ":" in t}
+        return {t.split(":")[0]: t.split(":")[1] for t in times if ":" in t}

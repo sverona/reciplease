@@ -4,8 +4,7 @@ from . import RecipeHandler, split_into_subheadings, SubheadingGroup, text
 
 
 class KingArthurHandler(RecipeHandler):
-    """Handler for recipes from kingarthurbaking.com.
-    """
+    """Handler for recipes from kingarthurbaking.com."""
 
     def title(self) -> str:
         header = self.extract_one("h1", root="page-content-header")
@@ -31,9 +30,11 @@ class KingArthurHandler(RecipeHandler):
         return ingredients
 
     def instructions(self) -> SubheadingGroup:
-        instructions_tags = self.extract(["ol li", "ul li"],
-                                         remove=["li aside", "share"],
-                                         root=".field--recipe-steps")
+        instructions_tags = self.extract(
+            ["ol li", "ul li"],
+            remove=["li aside", "share"],
+            root=".field--recipe-steps",
+        )
         instructions = [text(li) for li in instructions_tags]
         return split_into_subheadings(instructions)
 
@@ -51,7 +52,9 @@ class KingArthurHandler(RecipeHandler):
         return dict(zip(labels, times))
 
     def notes(self) -> SubheadingGroup:
-        notes_tags = self.extract([".recipe__tips ul li", ".ingredient-section__footnote"])
+        notes_tags = self.extract(
+            [".recipe__tips ul li", ".ingredient-section__footnote"]
+        )
         notes = [text(note) for note in notes_tags]
 
-        return {'Notes': notes}
+        return {"Notes": notes}

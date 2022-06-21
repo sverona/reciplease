@@ -4,8 +4,7 @@ from . import RecipeHandler, SubheadingGroup, text
 
 
 class DelishHandler(RecipeHandler):
-    """Handler for recipes from delish.com.
-    """
+    """Handler for recipes from delish.com."""
 
     def title(self) -> str:
         tag = self.extract_one(".recipe-hed")
@@ -23,8 +22,7 @@ class DelishHandler(RecipeHandler):
         return text(tag, squeeze=True)
 
     def time(self) -> dict[str, str]:
-        tags = self.soup.find_all("span",
-                                  class_=re.compile("[a-z]+-time-amount"))
+        tags = self.soup.find_all("span", class_=re.compile("[a-z]+-time-amount"))
 
         times = {}
         for tag in tags:
@@ -44,8 +42,9 @@ class DelishHandler(RecipeHandler):
             header_name = text(header, squeeze=True) or None
 
             these_ingredients = section.find_all(class_="ingredient-item")
-            ingredients[header_name] = [text(ing, squeeze=True)
-                                        for ing in these_ingredients]
+            ingredients[header_name] = [
+                text(ing, squeeze=True) for ing in these_ingredients
+            ]
         return ingredients
 
     def instructions(self) -> SubheadingGroup:
@@ -57,8 +56,9 @@ class DelishHandler(RecipeHandler):
             header_name = text(header, squeeze=True) or None
 
             these_instructions = section.find_all(["li", "p"])
-            instructions[header_name] = [text(ins, squeeze=True)
-                                         for ins in these_instructions]
+            instructions[header_name] = [
+                text(ins, squeeze=True) for ins in these_instructions
+            ]
         return instructions
 
     # I was unable to find a Delish recipe with a notes section.

@@ -2,9 +2,9 @@ import re
 
 from . import RecipeHandler, SubheadingGroup, text
 
+
 class AllrecipesHandler(RecipeHandler):
-    """Handler for recipes from allrecipes.com.
-    """
+    """Handler for recipes from allrecipes.com."""
 
     def title(self) -> str:
         tag = self.extract_one("h1", root=".recipe-main-header")
@@ -18,7 +18,9 @@ class AllrecipesHandler(RecipeHandler):
 
         headings: list[str | None] = []
         for section in sections:
-            heading_tag = RecipeHandler(section).extract_one(".ingredients-section__legend")
+            heading_tag = RecipeHandler(section).extract_one(
+                ".ingredients-section__legend"
+            )
             if heading_tag:
                 heading_text = text(heading_tag)
                 heading_text = re.sub("^For the ", "", heading_text)
@@ -43,8 +45,12 @@ class AllrecipesHandler(RecipeHandler):
         return {None: steps}
 
     def yield_(self) -> str:
-        values_tags = self.extract(".recipe-meta-item-body", root=".recipe-meta-container")
-        labels_tags = self.extract(".recipe-meta-item-header", root=".recipe-meta-container")
+        values_tags = self.extract(
+            ".recipe-meta-item-body", root=".recipe-meta-container"
+        )
+        labels_tags = self.extract(
+            ".recipe-meta-item-header", root=".recipe-meta-container"
+        )
 
         values = [text(value) for value in values_tags]
         labels = [re.sub(":$", "", text(label)) for label in labels_tags]
@@ -58,16 +64,22 @@ class AllrecipesHandler(RecipeHandler):
         return ""
 
     def time(self) -> dict[str, str]:
-        values_tags = self.extract(".recipe-meta-item-body", root=".recipe-meta-container")
-        labels_tags = self.extract(".recipe-meta-item-header", root=".recipe-meta-container")
+        values_tags = self.extract(
+            ".recipe-meta-item-body", root=".recipe-meta-container"
+        )
+        labels_tags = self.extract(
+            ".recipe-meta-item-header", root=".recipe-meta-container"
+        )
 
         values = [text(value) for value in values_tags]
         labels = [re.sub(":$", "", text(label)) for label in labels_tags]
 
         accept = ["cook", "prep", "additional", "total"]
-        pairs = {label.capitalize(): value
-                 for label, value in zip(labels, values)
-                 if label in accept}
+        pairs = {
+            label.capitalize(): value
+            for label, value in zip(labels, values)
+            if label in accept
+        }
 
         return pairs
 

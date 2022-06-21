@@ -6,8 +6,7 @@ from . import RecipeHandler, SubheadingGroup, split_into_subheadings, text
 
 
 class EpicuriousHandler(RecipeHandler):
-    """Handler for recipes from epicurious.com.
-    """
+    """Handler for recipes from epicurious.com."""
 
     # I swear to fuck...
     def title(self) -> str:
@@ -43,7 +42,9 @@ class EpicuriousHandler(RecipeHandler):
         sections = self.soup.find_all(class_=re.compile("^InstructionGroupWrapper.*"))
         for section in sections:
             title = re.sub(":$", "", text(section.h3)) or None
-            these_instructions = section.find_all(class_=re.compile("^InstructionBody.*"))
+            these_instructions = section.find_all(
+                class_=re.compile("^InstructionBody.*")
+            )
             instructions[title] = [text(ins) for ins in these_instructions]
 
         return instructions

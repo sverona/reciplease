@@ -6,14 +6,18 @@ from . import RecipeHandler, SubheadingGroup, text
 
 
 class WordpressHandler(RecipeHandler):
-    """Handler for recipes from blogs that use Wordpress Recipe Manager (WPRM).
-    """
+    """Handler for recipes from blogs that use Wordpress Recipe Manager (WPRM)."""
+
     def title(self) -> str:
-        title = self.extract_one(".wprm-recipe-name", remove=".wprm-recipe-roundup-item")
+        title = self.extract_one(
+            ".wprm-recipe-name", remove=".wprm-recipe-roundup-item"
+        )
         return text(title)
 
     def author(self) -> str:
-        author_name = self.extract_one(".entry-author-name", remove=".wprm-recipe-roundup-item")
+        author_name = self.extract_one(
+            ".entry-author-name", remove=".wprm-recipe-roundup-item"
+        )
         return text(author_name)
 
     def source(self) -> str:
@@ -54,7 +58,9 @@ class WordpressHandler(RecipeHandler):
 
             ingredients = group.select("ul li.wprm-recipe-ingredient")
             for ingredient in ingredients:
-                for checkbox in ingredient.find_all(True, class_="wprm-checkbox-container"):
+                for checkbox in ingredient.find_all(
+                    True, class_="wprm-checkbox-container"
+                ):
                     checkbox.extract()
             ingredients = [text(li) for li in ingredients]
             result[name] = ingredients
@@ -80,7 +86,9 @@ class WordpressHandler(RecipeHandler):
 
             instructions = group.select("li.wprm-recipe-instruction")
             for instruction in instructions:
-                for checkbox in instruction.find_all(True, class_="wprm-checkbox-container"):
+                for checkbox in instruction.find_all(
+                    True, class_="wprm-checkbox-container"
+                ):
                     checkbox.extract()
             instructions = [text(li) for li in instructions]
             result[name] = instructions
@@ -95,12 +103,16 @@ class WordpressHandler(RecipeHandler):
             values = [text(value) for value in values_tags]
 
             labels_tags = section.select(".wprm-recipe-time-label")
-            labels = [re.sub(r"( Time)?:?\s*$", "", text(label)) for label in labels_tags]
+            labels = [
+                re.sub(r"( Time)?:?\s*$", "", text(label)) for label in labels_tags
+            ]
 
             acceptable_labels = ["cook", "prep", "additional", "total", "rest"]
-            pairs = {label.capitalize(): value
-                     for label, value in zip(labels, values)
-                     if label.lower() in acceptable_labels}
+            pairs = {
+                label.capitalize(): value
+                for label, value in zip(labels, values)
+                if label.lower() in acceptable_labels
+            }
 
             return pairs
         return {}

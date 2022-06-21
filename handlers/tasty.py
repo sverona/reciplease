@@ -2,9 +2,10 @@ import re
 
 from . import RecipeHandler, SubheadingGroup, text
 
+
 class TastyHandler(RecipeHandler):
-    """Handler for recipes from tasty.co.
-    """
+    """Handler for recipes from tasty.co."""
+
     def title(self) -> str:
         title = self.soup.find(True, class_="recipe-name")
         return text(title)

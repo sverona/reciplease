@@ -14,7 +14,7 @@ def wrap_fractions(text):
     return re.sub(r"(?:(\d+)\s+)?(\d+/\d+)", r'\1<span class="frac">\2</span>', text)
 
 
-@app.route('/')
+@app.route("/")
 def index():
     return render_template("index.html")
 
@@ -26,25 +26,25 @@ def check_url(url):
     return prepared_request.url
 
 
-@app.route('/reciplease', methods=['GET', 'POST'])
+@app.route("/reciplease", methods=["GET", "POST"])
 def route_to_recipe():
-    if request.method == 'POST':
-        url = request.form['recipeUrl']
+    if request.method == "POST":
+        url = request.form["recipeUrl"]
         try:
             check_url(url)
         except requests.exceptions.MissingSchema:
-            return '404'
+            return "404"
 
         return redirect(f"/{url}")
 
 
-@app.route('/<path:url>')
+@app.route("/<path:url>")
 def reciplease(url):
     print(url)
     try:
         check_url(url)
     except requests.exceptions.MissingSchema:
-        return '404'
+        return "404"
 
     recipe = from_url(url)
     return render_template("recipe.html", recipe=recipe)
