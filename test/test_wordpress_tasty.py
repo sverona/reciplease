@@ -64,9 +64,16 @@ class TestWordpressTastyPreV3:
     url = "https://www.wickedstuffed.com/keto-recipes/low-carb-keto-pancakes-recipe-with-cream-cheese/"
     recipe = Recipe(get_soup(url), WordpressTastyPreV3Handler)
 
+    url2 = "https://cookieandkate.com/best-red-chilaquiles-recipe/"
+    recipe2 = Recipe(get_soup(url2), WordpressTastyPreV3Handler)
+
     def test_title(self):
         """...properly scrape the title."""
         assert self.recipe.title == "The Original Keto Pancakes Recipe"
+
+    def test_title_unclassed(self):
+        """...properly scrape titles not possessing a class."""
+        assert self.recipe2.title == "Chilaquiles Rojos"
 
     def test_author(self):
         """...properly scrape the author."""
