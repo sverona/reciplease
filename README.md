@@ -1,6 +1,15 @@
-# Added (under test)
+# Reciplease
+Reciplease is a universal "print recipe" button; it takes recipe URLs and
+transforms them into consistently formatted, nicely typeset recipes.
 
-## WPRM
+Usage is similar to https://12ft.io; to convert `https://your-recipe-url`,
+access `reciplea.se/https://your-recipe-url`.
+
+
+## Example sites
+Below is a list of sites that have been verified to work with Reciplease.
+
+### WPRM
 - thestayathomechef.com
 - addapinch.com
 - cafedelites.com
@@ -18,37 +27,38 @@
 - cookwithmanali.com
 - holycowvegan.net
 
-## WP Tasty Recipes V3
+### WP Tasty Recipes V3
 - sallysbakingaddiction.com
 - gimmesomeoven.com (has sections) (https://www.gimmesomeoven.com/avocado-strawberry-spinach-salad-with-poppyseed-dressing/)
 
-## WP Tasty Recipes pre-v3
-- cookieandkate.com (recheck!!)
+### WP Tasty Recipes pre-v3
+- cookieandkate.com
 
-## Allrecipes
+### Allrecipes
 - allrecipes.com
 
-## SeriousEats (fix meta)
+### SeriousEats (fix meta)
 - seriouseats.com
 - simplyrecipes.com
 
-## King Arthur
+### King Arthur
 - kingarthurbaking.com
 
-## Tasty
+### Tasty
 - tasty.co
 
-## Delish
+### Delish
 - delish.com
 
-## BBC
+### BBC
 - bbcgoodfood.com
 
-# Not added yet
 
-## Custom
+## Presently unsupported sites
+Below is a list of sites that do not work yet with Reciplease.
+
+### Custom
 - foodnetwork.com
-- epicurious.com
 - pillsbury.com
 - thepioneerwoman.com
 - food52.com
@@ -57,10 +67,10 @@
 - goodhousekeeping.com
 - inspiredtaste.net (https://www.inspiredtaste.net/wp-content/plugins/inspiredtasterecipe/readme.txt)
 
-## Blog-style
+### Blog-style
 - theppk.com
 - markbittman.com
 
-## NYTimes
+### NYTimes
 - cooking.nytimes.com (https://archive.ph/fCz00)
 - bonappetit.com
