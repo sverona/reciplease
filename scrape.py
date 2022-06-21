@@ -4,14 +4,16 @@ from bs4 import BeautifulSoup
 import requests as r
 
 from handlers import Recipe
-from handlers.seriouseats import SeriousEatsHandler
 from handlers.allrecipes import AllrecipesHandler
 from handlers.bbc import BBCHandler
 from handlers.delish import DelishHandler
+from handlers.epicurious import EpicuriousHandler
 from handlers.kingarthur import KingArthurHandler
+from handlers.seriouseats import SeriousEatsHandler
 from handlers.tasty import TastyHandler
 from handlers.wordpress import WordpressHandler
 from handlers.wordpress_tasty import WordpressTastyV3Handler
+
 
 def get_soup(url: str) -> BeautifulSoup:
     """cURL the provided `url`.
