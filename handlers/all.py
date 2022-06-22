@@ -9,6 +9,7 @@ from .allrecipes import AllrecipesHandler
 from .bbc import BBCHandler
 from .delish import DelishHandler
 from .epicurious import EpicuriousHandler
+from .food52 import Food52Handler
 from .kingarthur import KingArthurHandler
 from .seriouseats import SeriousEatsHandler
 from .tasty import TastyHandler
@@ -23,10 +24,11 @@ ALL_HANDLERS = [
     WordpressTastyV3Handler,
     WordpressTastyPreV3Handler,
     AllrecipesHandler,
-    KingArthurHandler,
-    TastyHandler,
-    SeriousEatsHandler,
     BBCHandler,
     DelishHandler,
     EpicuriousHandler,
+    Food52Handler,
+    KingArthurHandler,
+    SeriousEatsHandler,
+    TastyHandler,
 ]
