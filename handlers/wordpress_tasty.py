@@ -1,7 +1,5 @@
 import re
 
-from bs4 import Tag
-
 from . import RecipeHandler, SubheadingGroup, text
 
 

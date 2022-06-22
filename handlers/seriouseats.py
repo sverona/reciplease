@@ -43,11 +43,14 @@ class SeriousEatsHandler(RecipeHandler):
 
     def ingredients(self) -> SubheadingGroup:
         ingredients = self.extract("ul li", root=".section--ingredients")
+        if not ingredients:
+            return {}
+
         ingredients_text = [text(ing) for ing in ingredients]
 
         if any(re.match("For the ", ing, re.I) for ing in ingredients_text):
             return split_into_subheadings(ingredients_text)
-        return {"": ingredients_text}
+        return {None: ingredients_text}
 
     def instructions(self) -> SubheadingGroup:
         section = self.extract_one("section#section--instructions_1-0")
@@ -67,7 +70,7 @@ class SeriousEatsHandler(RecipeHandler):
 
         if any(re.match("For the", inst, re.I) for inst in instructions):
             return split_into_subheadings(instructions)
-        return {"": instructions}
+        return {None: instructions}
 
     def notes(self) -> SubheadingGroup:
         tags = self.extract(
@@ -79,7 +82,7 @@ class SeriousEatsHandler(RecipeHandler):
         current_section = None
         for tag in tags:
             if tag.name == "h2":
-                current_section = text(tag)
+                current_section = text(tag) or None
             else:
                 sections[current_section].append(text(tag))
 

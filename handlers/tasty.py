@@ -33,12 +33,13 @@ class TastyHandler(RecipeHandler):
         return ingredients
 
     def instructions(self) -> SubheadingGroup:
-        instruction_tags = self.extract(".preparation .prep-steps li")
-        if instruction_tags:
-            instructions = [text(li) for li in instruction_tags]
+        container = self.extract_one(".preparation .prep-steps")
 
-            return {None: instructions}
-        return {}
+        if not container:
+            return {}
+
+        instructions = [text(li) for li in container.find_all("li")]
+        return {None: instructions}
 
     def yield_(self) -> str:
         yield_text = text(self.extract_one(".servings-display"))

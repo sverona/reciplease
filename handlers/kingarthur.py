@@ -9,7 +9,7 @@ class KingArthurHandler(RecipeHandler):
     sites = {"kingarthurbaking.com": "King Arthur Baking"}
 
     def title(self) -> str:
-        header = self.extract_one("h1", root="page-content-header")
+        header = self.extract_one("h1", root=".page-content-header")
         return text(header)
 
     def author(self) -> str:
