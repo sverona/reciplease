@@ -43,14 +43,17 @@ class TestWordpressTastyV3:
     def test_instructions(self):
         """...properly scrape instructions."""
         assert (
-            "DOUGH PREP: In a large mixing bowl, whisk the flour, salt, and yeast together until mixed. Stir in the water until a chunky, thick dough forms. Let it rest, like maybe forever."
+            "DOUGH PREP: In a large mixing bowl, whisk the flour, salt, and"
+            " yeast together until mixed. Stir in the water until a chunky,"
+            " thick dough forms. Let it rest, like maybe forever."
             in self.recipe.instructions[None]
         )
 
     def test_notes(self):
         """...properly scrape recipe notes."""
         assert (
-            "The equipment section above contains affiliate links to products we use and love!"
+            "The equipment section above contains affiliate links to products"
+            " we use and love!"
             in self.recipe.notes[None]
         )
 
@@ -102,13 +105,18 @@ class TestWordpressTastyPreV3:
     def test_instructions(self):
         """...properly scrape the instructions."""
         assert (
-            "Blend or beat together all of the ingredients until smooth in a bowl or blender."
+            "Blend or beat together all of the ingredients until smooth in a"
+            " bowl or blender."
             in self.recipe.instructions[None]
         )
 
     def test_notes(self):
         """...properly scrape the notes."""
         assert (
-            "The coconut flour in this keto pancakes recipe helps keep the pancakes together, rather than crumbling like almond flour tends to do. It also helps them crisp up in the pan. I really like Lakanto’s Monkfruit Maple Syrup (use code WICKEDSTUFFED to save 20%)"
+            "The coconut flour in this keto pancakes recipe helps keep the"
+            " pancakes together, rather than crumbling like almond flour tends"
+            " to do. It also helps them crisp up in the pan. I really like"
+            " Lakanto’s Monkfruit Maple Syrup (use code WICKEDSTUFFED to save"
+            " 20%)"
             in self.recipe.notes[None]
         )

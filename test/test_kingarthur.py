@@ -34,7 +34,8 @@ class TestKingArthur:
         """...properly scrape notes."""
 
         assert (
-            "For stronger lemon flavor, use the grated rind of 2 lemons + 1/2 teaspoon lemon oil."
+            "For stronger lemon flavor, use the grated rind of 2 lemons + 1/2"
+            " teaspoon lemon oil."
             in self.recipe.notes[None]
         )
 
@@ -52,7 +53,8 @@ class TestKingArthur:
         """...catch footnotes in the ingredients section."""
 
         assert (
-            "*If you use salted butter, reduce the salt in the recipe to 3/4 teaspoon."
+            "*If you use salted butter, reduce the salt in the recipe to 3/4"
+            " teaspoon."
             in self.recipe.notes[None]
         )
 

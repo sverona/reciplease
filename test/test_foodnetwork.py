@@ -40,6 +40,7 @@ class TestFoodNetwork:
     def test_instructions(self):
         """...scrape the instructions."""
         assert (
-            "Make the herb sour cream: Whisk the sour cream, chives and dill in a medium bowl. Set aside."
+            "Make the herb sour cream: Whisk the sour cream, chives and dill"
+            " in a medium bowl. Set aside."
             in self.recipe.instructions[None]
         )

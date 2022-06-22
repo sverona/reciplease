@@ -39,7 +39,8 @@ class TestEpicurious:
     def test_instructions(self):
         """...properly scrape the instructions."""
         assert (
-            "Mix butter, cinnamon, and 1/2 cup brown sugar in a medium bowl until combined."
+            "Mix butter, cinnamon, and 1/2 cup brown sugar in a medium bowl"
+            " until combined."
             in self.recipe.instructions["For the Filling and Assembly"]
         )
 

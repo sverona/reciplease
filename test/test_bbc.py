@@ -40,7 +40,8 @@ class TestBBC:
     def test_instructions(self):
         """...properly scrape instructions."""
         assert (
-            "Drain the pasta, mix with the sauce in a large bowl, then divide between two bowls and add a handful of rocket to each."
+            "Drain the pasta, mix with the sauce in a large bowl, then divide"
+            " between two bowls and add a handful of rocket to each."
             in self.recipe.instructions[None]
         )
 

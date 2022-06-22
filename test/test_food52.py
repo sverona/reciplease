@@ -41,7 +41,9 @@ class TestFood52:
     def test_instructions(self):
         """...scrape the instructions."""
         assert (
-            "Once noodles and peas are cooked, drain both and return to the pot. Add chopped kale and pesto. Toss to coat evenly. You're done! Enjoy!"
+            "Once noodles and peas are cooked, drain both and return to the"
+            " pot. Add chopped kale and pesto. Toss to coat evenly. You're"
+            " done! Enjoy!"
             in self.recipe.instructions["Soba with kale"]
         )
 

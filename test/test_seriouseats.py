@@ -16,7 +16,8 @@ class TestSeriousEats:
     def test_instructions(self):
         """...properly scrape instructions."""
         assert (
-            "Add cucumber spears and toss until evenly coated with sauce. Transfer to a serving plate, garnish with dill, and serve."
+            "Add cucumber spears and toss until evenly coated with sauce."
+            " Transfer to a serving plate, garnish with dill, and serve."
             in self.recipe.instructions[""]
         )
 
@@ -24,11 +25,14 @@ class TestSeriousEats:
         """...properly scrape notes."""
 
         assert (
-            "To substitute English or cocktail cucumbers, replace with an equal amount by weight. Trim ends and cut into 3- by 5/8-inch wide spears."
+            "To substitute English or cocktail cucumbers, replace with an"
+            " equal amount by weight. Trim ends and cut into 3- by 5/8-inch"
+            " wide spears."
             in self.recipe.notes["Notes"]
         )
         assert (
-            "Tahini sauce can be prepared in advance and refrigerated in an airtight container for up to 1 week."
+            "Tahini sauce can be prepared in advance and refrigerated in an"
+            " airtight container for up to 1 week."
             in self.recipe.notes["Make-ahead and Storage"]
         )
 
