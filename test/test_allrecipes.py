@@ -1,11 +1,12 @@
-from scrape import from_url
+from handlers import Page, Recipe
+from handlers.allrecipes import AllrecipesHandler
 
 
 class TestAllrecipes:
     """The AllRecipes handler should..."""
 
     url = "https://www.allrecipes.com/recipe/281437/chef-johns-taco-stuffed-zucchini-boats/"
-    recipe = from_url(url)
+    recipe = Recipe(Page(url), AllrecipesHandler)
 
     def test_title(self):
         """...properly scrape the title."""

@@ -7,6 +7,11 @@ from . import RecipeHandler, split_into_subheadings, SubheadingGroup, text
 class SeriousEatsHandler(RecipeHandler):
     """Handler for recipes from Serious Eats."""
 
+    sites = {
+        "seriouseats.com": "Serious Eats",
+        "simplyrecipes.com": "Simply Recipes",
+    }
+
     def title(self) -> str:
         tag = self.extract_one("h1", root=".article-header")
         return re.sub(" Recipe$", "", text(tag))
@@ -16,9 +21,6 @@ class SeriousEatsHandler(RecipeHandler):
             ["#mntl-byline-link_1-0", ".mntl-attribution__item-name"]
         )
         return re.sub(r"^By\s+", "", text(tag))
-
-    def source(self) -> str:
-        return "Serious Eats"
 
     def time(self) -> dict[str, str]:
         times = self.extract(
@@ -53,7 +55,7 @@ class SeriousEatsHandler(RecipeHandler):
         if not section:
             return {}
 
-        for tag in section.findAll("figure"):
+        for tag in section.find_all("figure"):
             tag.extract()
 
         instructions_tags = section.select("li")

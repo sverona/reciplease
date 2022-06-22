@@ -1,16 +1,15 @@
-from handlers import Recipe
+from handlers import Page, Recipe
 from handlers.wordpress_tasty import (
     WordpressTastyV3Handler,
     WordpressTastyPreV3Handler,
 )
-from scrape import get_soup
 
 
 class TestWordpressTastyV3:
     """The Wordpress Tasty V3 handler should..."""
 
     url = "https://www.wptasty.com/tasty-recipes/demo"
-    recipe = Recipe(get_soup(url), WordpressTastyV3Handler)
+    recipe = Recipe(Page(url), WordpressTastyV3Handler)
 
     def test_title(self):
         """...properly scrape the title."""
@@ -62,10 +61,10 @@ class TestWordpressTastyPreV3:
     # This was a bitch to find.
     # https://support.wptasty.com/en/articles/805141-can-i-use-a-custom-php-template
     url = "https://www.wickedstuffed.com/keto-recipes/low-carb-keto-pancakes-recipe-with-cream-cheese/"
-    recipe = Recipe(get_soup(url), WordpressTastyPreV3Handler)
+    recipe = Recipe(Page(url), WordpressTastyPreV3Handler)
 
     url2 = "https://cookieandkate.com/best-red-chilaquiles-recipe/"
-    recipe2 = Recipe(get_soup(url2), WordpressTastyPreV3Handler)
+    recipe2 = Recipe(Page(url2), WordpressTastyPreV3Handler)
 
     def test_title(self):
         """...properly scrape the title."""

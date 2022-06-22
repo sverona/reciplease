@@ -6,6 +6,8 @@ from . import RecipeHandler, split_into_subheadings, SubheadingGroup, text
 class KingArthurHandler(RecipeHandler):
     """Handler for recipes from kingarthurbaking.com."""
 
+    sites = {"kingarthurbaking.com": "King Arthur Baking"}
+
     def title(self) -> str:
         header = self.extract_one("h1", root="page-content-header")
         return text(header)
@@ -13,9 +15,6 @@ class KingArthurHandler(RecipeHandler):
     def author(self) -> str:
         author = self.extract_one(".article__author")
         return re.sub(r"^By\s+", "", text(author))
-
-    def source(self) -> str:
-        return "King Arthur Baking"
 
     def ingredients(self) -> SubheadingGroup:
         ingredients = {}
@@ -59,4 +58,6 @@ class KingArthurHandler(RecipeHandler):
         )
         notes = [text(note) for note in notes_tags]
 
-        return {"Notes": notes}
+        if not notes:
+            return {}
+        return {None: notes}

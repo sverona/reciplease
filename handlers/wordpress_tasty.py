@@ -16,16 +16,6 @@ class WordpressTastyV3Handler(RecipeHandler):
         author_name = self.extract_one(".tasty-recipes-author-name")
         return text(author_name)
 
-    def source(self) -> str:
-        site_name = self.soup.find("meta", attrs={"property": "og:site_name"})
-
-        if isinstance(site_name, Tag):
-            content = site_name.attrs["content"]
-            if isinstance(content, str):
-                return content
-            return ", ".join(content)
-        return ""
-
     def yield_(self) -> str:
         yield_tag = self.extract_one(
             ".tasty-recipes-yield", remove=".tasty-recipes-yield-scale"

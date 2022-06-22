@@ -1,11 +1,12 @@
-from scrape import from_url
+from handlers import Page, Recipe
+from handlers.wordpress import WordpressHandler
 
 
 class TestWordpressRecipeManager:
     """The Wordpress Recipe Manager handler should..."""
 
     url = "https://www.cookwithmanali.com/kadai-paneer/"
-    recipe = from_url(url)
+    recipe = Recipe(Page(url), WordpressHandler)
 
     def test_title(self):
         """...properly scrape the title."""

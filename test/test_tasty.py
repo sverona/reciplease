@@ -1,13 +1,12 @@
-from handlers import Recipe
+from handlers import Page, Recipe
 from handlers.tasty import TastyHandler
-from scrape import get_soup
 
 
 class TestTasty:
     """The Tasty handler should..."""
 
     url = "https://tasty.co/recipe/ritu-swasti-s-shahi-paneer"
-    recipe = Recipe(get_soup(url), TastyHandler)
+    recipe = Recipe(Page(url), TastyHandler)
 
     def test_title(self):
         """...properly scrape the title."""
@@ -19,7 +18,7 @@ class TestTasty:
 
     def test_source(self):
         """...properly scrape the recipe source."""
-        assert self.recipe.source == "tasty.co"
+        assert self.recipe.source == "Tasty"
 
     # tasty.co doesn't provide recipe timings yet.
 

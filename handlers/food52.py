@@ -6,6 +6,8 @@ from . import RecipeHandler, SubheadingGroup, text
 class Food52Handler(RecipeHandler):
     """Handler for recipes from food52.com."""
 
+    sites = {"food52.com": "Food52"}
+
     def title(self) -> str:
         return text(self.extract_one(".recipe__title"))
 
@@ -15,9 +17,6 @@ class Food52Handler(RecipeHandler):
         author_text = author_text.title()
 
         return author_text
-
-    def source(self) -> str:
-        return "Food52"
 
     def yield_(self) -> str:
         details = self.extract_one(".recipe__details")

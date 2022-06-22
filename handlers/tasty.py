@@ -6,16 +6,13 @@ from . import RecipeHandler, SubheadingGroup, text
 class TastyHandler(RecipeHandler):
     """Handler for recipes from tasty.co."""
 
+    sites = {"tasty.co": "Tasty"}
+
     def title(self) -> str:
-        title = self.soup.find(True, class_="recipe-name")
-        return text(title)
+        return text(self.extract_one(".recipe-name"))
 
     def author(self) -> str:
-        byline = self.soup.find(True, class_="byline")
-        return text(byline)
-
-    def source(self) -> str:
-        return "tasty.co"
+        return text(self.extract_one(".byline"))
 
     # Unable to find a tasty.co recipe containing time information.
 
@@ -24,7 +21,7 @@ class TastyHandler(RecipeHandler):
 
         ingredients = {}
         for section in sections:
-            name_tag = section.find(True, class_="ingredient-section-name")
+            name_tag = section.find(class_="ingredient-section-name")
             if name_tag:
                 name = text(name_tag)
             else:
@@ -44,5 +41,5 @@ class TastyHandler(RecipeHandler):
         return {}
 
     def yield_(self) -> str:
-        servings = self.soup.find(True, class_="servings-display")
-        return re.sub("^for ", "", text(servings))
+        yield_text = text(self.extract_one(".servings-display"))
+        return re.sub("^for ", "", yield_text)

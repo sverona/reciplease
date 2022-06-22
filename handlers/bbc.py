@@ -6,6 +6,8 @@ from . import RecipeHandler, SubheadingGroup, text
 class BBCHandler(RecipeHandler):
     """Handler for recipes from bbcgoodfood.com."""
 
+    sites = {"bbcgoodfood.com": "BBC Good Food"}
+
     def title(self) -> str:
         tag = self.extract_one(".heading-1", root=".headline")
         return text(tag)
@@ -14,9 +16,6 @@ class BBCHandler(RecipeHandler):
         tag = self.extract_one(".author-link")
         tag_text = text(tag)
         return re.sub("^By ", "", tag_text)
-
-    def source(self) -> str:
-        return "BBC Good Food"
 
     def yield_(self) -> str:
         tag = self.extract_one(".post-header__servings")
@@ -43,9 +42,10 @@ class BBCHandler(RecipeHandler):
 
         section = self.extract_one(".recipe__method-steps")
         if section:
-            instructions_tags = RecipeHandler(section).extract(
-                "li", remove=".heading-6"
-            )
+            for heading in section.find_all(class_="heading-6"):
+                heading.extract()
+
+            instructions_tags = section.find_all("li")
             instructions = [text(ins) for ins in instructions_tags]
             return {None: instructions}
         return {}

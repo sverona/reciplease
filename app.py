@@ -4,9 +4,27 @@ from flask import Flask, render_template, request, redirect
 from requests.models import PreparedRequest
 import requests.exceptions
 
-from scrape import from_url
+from handlers import Page, Recipe
+from handlers.all import ALL_HANDLERS
+
 
 app = Flask(__name__)
+
+
+def from_url(url: str) -> Recipe:
+    """Parse a recipe from a given URL."""
+    page = Page(url)
+
+    # Try a regex match first.
+    for handler in ALL_HANDLERS:
+        if page.url.netloc in handler.sites:
+            return Recipe(page, handler)
+
+    for handler in ALL_HANDLERS:
+        recipe = Recipe(page, handler)
+        if recipe.ingredients and recipe.instructions:
+            return recipe
+    raise Exception("No usable handler found.")
 
 
 @app.template_filter()

@@ -6,21 +6,18 @@ from . import RecipeHandler, SubheadingGroup, text
 class AllrecipesHandler(RecipeHandler):
     """Handler for recipes from allrecipes.com."""
 
+    sites = {"allrecipes.com": "Allrecipes"}
+
     def title(self) -> str:
         tag = self.extract_one("h1", root=".recipe-main-header")
         return text(tag)
-
-    def source(self) -> str:
-        return "Allrecipes"
 
     def ingredients(self) -> SubheadingGroup:
         sections = self.extract(".ingredients-section__fieldset")
 
         headings: list[str | None] = []
         for section in sections:
-            heading_tag = RecipeHandler(section).extract_one(
-                ".ingredients-section__legend"
-            )
+            heading_tag = section.find(class_="ingredients-section__legend")
             if heading_tag:
                 heading_text = text(heading_tag)
                 heading_text = re.sub("^For the ", "", heading_text)
@@ -31,7 +28,7 @@ class AllrecipesHandler(RecipeHandler):
 
         ingredients: SubheadingGroup = {}
         for heading, section in zip(headings, sections):  # type: ignore
-            these_ingredients = RecipeHandler(section).extract("li")
+            these_ingredients = section.find_all("li")
             ingredients[heading] = [
                 text(ing) for ing in these_ingredients if ing
             ]
@@ -95,14 +92,13 @@ class AllrecipesHandler(RecipeHandler):
         headings: list[str | None] = []
         notes = []
         for section in sections:
-            handler = RecipeHandler(section)
-            tag = handler.extract_one("h2")
+            tag = section.find("h2")
             if tag:
                 headings.append(re.sub(":$", "", text(tag)))
             else:
                 headings.append(None)
 
-            notes_tags = handler.extract(".paragraph")
+            notes_tags = section.find_all(class_="paragraph")
             notes.append([text(note) for note in notes_tags])
 
         return dict(zip(headings, notes))

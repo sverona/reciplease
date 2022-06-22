@@ -20,19 +20,8 @@ class WordpressHandler(RecipeHandler):
         )
         return text(author_name)
 
-    def source(self) -> str:
-        site_name = self.soup.find("meta", attrs={"property": "og:site_name"})
-
-        if isinstance(site_name, Tag):
-            content = site_name.attrs["content"]
-            if isinstance(content, str):
-                return content
-            return ", ".join(content)
-        return ""
-
     def yield_(self) -> str:
-        recipe_servings = self.soup.find(True, class_="wprm-recipe-servings")
-
+        recipe_servings = self.extract_one(".wprm-recipe-servings")
         servings_text = text(recipe_servings)
 
         if re.match(r"\d+", servings_text):
@@ -40,7 +29,7 @@ class WordpressHandler(RecipeHandler):
         return servings_text
 
     def ingredients(self) -> SubheadingGroup:
-        div = self.soup.find(True, class_="wprm-recipe-ingredients-container")
+        div = self.extract_one(".wprm-recipe-ingredients-container")
 
         if not isinstance(div, Tag):
             return {}
@@ -68,7 +57,7 @@ class WordpressHandler(RecipeHandler):
         return result
 
     def instructions(self) -> SubheadingGroup:
-        div = self.soup.find(True, class_="wprm-recipe-instructions-container")
+        div = self.extract_one(".wprm-recipe-instructions-container")
 
         if not isinstance(div, Tag):
             return {}
@@ -119,7 +108,7 @@ class WordpressHandler(RecipeHandler):
         return {}
 
     def notes(self) -> SubheadingGroup:
-        div = self.soup.find(True, class_="wprm-recipe-notes")
+        div = self.extract_one(".wprm-recipe-notes")
 
         if div:
             return {"": [line for line in div.text.split("\n") if line]}

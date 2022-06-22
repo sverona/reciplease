@@ -1,6 +1,5 @@
-from handlers import Recipe
+from handlers import Page, Recipe
 from handlers.food52 import Food52Handler
-from scrape import get_soup
 
 
 class TestFood52:
@@ -9,7 +8,7 @@ class TestFood52:
     url = (
         "https://food52.com/recipes/34010-soba-with-parsley-pea-pesto-and-kale"
     )
-    recipe = Recipe(get_soup(url), Food52Handler)
+    recipe = Recipe(Page(url), Food52Handler)
 
     def test_title(self):
         """...scrape the title."""

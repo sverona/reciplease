@@ -1,14 +1,12 @@
-from handlers import Recipe
+from handlers import Page, Recipe
 from handlers.delish import DelishHandler
-
-from scrape import get_soup
 
 
 class TestDelish:
     """The Delish handler should..."""
 
     url = "https://www.delish.com/cooking/recipe-ideas/a40119787/pork-adobo-recipe/"
-    recipe = Recipe(get_soup(url), DelishHandler)
+    recipe = Recipe(Page(url), DelishHandler)
 
     def test_title(self):
         """...properly scrape the title."""
@@ -51,3 +49,46 @@ class TestDelish:
         assert self.recipe.time == expected
 
     # I was unable to find a Delish recipe containing a notes section.
+
+
+class TestDelishOnGoodHousekeeping:
+    """When run on Good Housekeeping, the Delish handler should..."""
+
+    url = "https://www.goodhousekeeping.com/food-recipes/healthy/a30729432/spring-green-salad-apricot-vinaigrette-recipe/"
+    recipe = Recipe(Page(url), DelishHandler)
+
+    def test_title(self):
+        """...scrape the title."""
+        assert (
+            self.recipe.title == "Spring Salad Recipe With Apricot Vinaigrette"
+        )
+
+    def test_author(self):
+        """...scrape the author."""
+        assert self.recipe.author == "The Good Housekeeping Test Kitchen"
+
+    def test_source(self):
+        """...scrape the source."""
+        assert self.recipe.source == "Good Housekeeping"
+
+    def test_yield(self):
+        """...scrape the yield."""
+        assert self.recipe.yield_ == "8 servings"
+
+    def test_time(self):
+        """...parse times into a dict."""
+        assert self.recipe.time == {"Total": "0 hours 20 mins"}
+
+    # I was unable to find a Good Housekeeping recipe with ingredient or
+    # instruction sections.
+
+    def test_ingredients(self):
+        """...scrape the ingredients."""
+        assert "2 tbsp. olive oil" in self.recipe.ingredients[None]
+
+    def test_instructions(self):
+        """...scrape the instructions."""
+        assert (
+            "Toss together remaining ingredients, then toss with vinaigrette."
+            in self.recipe.instructions[None]
+        )

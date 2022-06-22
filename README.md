@@ -59,6 +59,9 @@ Below is a list of sites that have been verified to work with Reciplease.
 ### Food Network
 - foodnetwork.com
 
+### Good Housekeeping
+- goodhousekeeping.com
+
 ## Presently unsupported sites
 Below is a list of sites that do not work yet with Reciplease.
 
@@ -67,7 +70,6 @@ Below is a list of sites that do not work yet with Reciplease.
 - thepioneerwoman.com
 - themodernproper.com
 - marthastewart.com
-- goodhousekeeping.com
 - inspiredtaste.net (https://www.inspiredtaste.net/wp-content/plugins/inspiredtasterecipe/readme.txt)
 
 ### Blog-style

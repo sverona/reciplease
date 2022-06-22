@@ -5,21 +5,44 @@ from copy import copy
 from dataclasses import dataclass
 import re
 from typing import Iterable
+from urllib.parse import ParseResult as URL, urlparse
 import unicodedata
 
 from bs4 import BeautifulSoup, NavigableString, Tag
+import requests as r
 
 
 SubheadingGroup = dict[str | None, list[str]]
 
 
+@dataclass
+class Page:
+    """Wrapper class that bundles a URL with its BeautifulSoup tree."""
+
+    url: URL
+    soup: Tag
+
+    def __init__(self, url: str):
+        self.url = urlparse(url)
+
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:88.0)"
+            "Gecko/20100101 Firefox/88.0"
+        }
+        resp = r.get(url, headers=headers)
+        resp.raise_for_status()
+
+        self.soup = BeautifulSoup(resp.text, "lxml")
+
+
 class RecipeHandler:
     """Abstract class for recipe parsers."""
 
-    soup: Tag
+    page: Page
+    sites: dict[str, str] = {}
 
-    def __init__(self, soup: Tag):
-        self.soup = soup
+    def __init__(self, page: Page):
+        self.page = page
 
     def title(self) -> str:
         """Return the recipe title."""
@@ -31,6 +54,19 @@ class RecipeHandler:
 
     def source(self) -> str:
         """Return the title of the website the recipe was posted on."""
+        for url, title in self.sites.items():
+            if url in self.page.url.netloc:
+                return title
+
+        site_name = self.page.soup.find(
+            "meta", attrs={"property": "og:site_name"}
+        )
+
+        if isinstance(site_name, Tag):
+            content = site_name.attrs["content"]
+            if isinstance(content, str):
+                return content
+            return ", ".join(content)
         return ""
 
     def time(self) -> dict[str, str]:
@@ -67,9 +103,9 @@ class RecipeHandler:
         """
         root_element = None
         if not root:
-            root_element = copy(self.soup)
+            root_element = copy(self.page.soup)
         else:
-            root_tag = self.soup.select_one(root)
+            root_tag = self.page.soup.select_one(root)
             if root_tag:
                 root_element = copy(root_tag)
 
@@ -156,10 +192,10 @@ class Recipe:
     instructions: SubheadingGroup
     notes: SubheadingGroup
 
-    def __init__(self, soup: BeautifulSoup, handler_type: type[RecipeHandler]):
+    def __init__(self, page: Page, handler_type: type[RecipeHandler]):
         """Attempt to parse a recipe from a given BeautifulSoup object `soup`."""
 
-        handler = handler_type(soup)
+        handler = handler_type(page)
 
         self.title = handler.title()
         self.author = handler.author()

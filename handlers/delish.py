@@ -6,6 +6,11 @@ from . import RecipeHandler, SubheadingGroup, text
 class DelishHandler(RecipeHandler):
     """Handler for recipes from delish.com."""
 
+    sites = {
+        "delish.com": "Delish",
+        "goodhousekeeping.com": "Good Housekeeping",
+    }
+
     def title(self) -> str:
         tag = self.extract_one(".recipe-hed")
         return text(tag)
@@ -14,15 +19,12 @@ class DelishHandler(RecipeHandler):
         tag = self.extract_one(".byline-name")
         return text(tag)
 
-    def source(self) -> str:
-        return "Delish"
-
     def yield_(self) -> str:
         tag = self.extract_one(".yields-amount")
         return text(tag, squeeze=True)
 
     def time(self) -> dict[str, str]:
-        tags = self.soup.find_all(
+        tags = self.page.soup.find_all(
             "span", class_=re.compile("[a-z]+-time-amount")
         )
 

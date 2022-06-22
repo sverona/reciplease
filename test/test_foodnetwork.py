@@ -1,13 +1,12 @@
-from handlers import Recipe
+from handlers import Page, Recipe
 from handlers.foodnetwork import FoodNetworkHandler
-from scrape import get_soup
 
 
 class TestFoodNetwork:
     """The Food Network handler should..."""
 
     url = "https://www.foodnetwork.com/recipes/trisha-yearwood/zucchini-cakes-with-herb-sour-cream-1-7118338"
-    recipe = Recipe(get_soup(url), FoodNetworkHandler)
+    recipe = Recipe(Page(url), FoodNetworkHandler)
 
     def test_title(self):
         """...scrape the title."""

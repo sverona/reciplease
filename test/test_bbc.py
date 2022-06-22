@@ -1,14 +1,12 @@
-from handlers import Recipe
+from handlers import Page, Recipe
 from handlers.bbc import BBCHandler
-
-from scrape import get_soup
 
 
 class TestBBC:
     """The BBC handler should..."""
 
     url = "https://www.bbcgoodfood.com/recipes/red-lentil-pasta-with-creamy-tomato-pepper-sauce"
-    recipe = Recipe(get_soup(url), BBCHandler)
+    recipe = Recipe(Page(url), BBCHandler)
 
     def test_title(self):
         """...properly scrape the title."""

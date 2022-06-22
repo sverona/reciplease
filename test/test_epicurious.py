@@ -1,13 +1,12 @@
-from handlers import Recipe
+from handlers import Page, Recipe
 from handlers.epicurious import EpicuriousHandler
-from scrape import get_soup
 
 
 class TestEpicurious:
     """The Epicurious handler should..."""
 
     url = "https://www.epicurious.com/recipes/food/views/glazed-cinnamon-cardamom-buns"
-    recipe = Recipe(get_soup(url), EpicuriousHandler)
+    recipe = Recipe(Page(url), EpicuriousHandler)
 
     def test_title(self):
         """...properly scrape the title."""

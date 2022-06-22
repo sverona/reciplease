@@ -6,6 +6,8 @@ from . import RecipeHandler, split_into_subheadings, SubheadingGroup, text
 class FoodNetworkHandler(RecipeHandler):
     """Handler for recipes from foodnetwork.com."""
 
+    sites = {"foodnetwork.com": "Food Network"}
+
     def title(self) -> str:
         return text(self.extract_one(".o-AssetTitle"))
 
@@ -15,9 +17,6 @@ class FoodNetworkHandler(RecipeHandler):
         author_text = re.sub("^Recipe courtesy of ", "", author_text)
 
         return author_text
-
-    def source(self) -> str:
-        return "Food Network"
 
     def yield_(self) -> str:
         yield_tag = self.extract_one(
@@ -50,9 +49,13 @@ class FoodNetworkHandler(RecipeHandler):
         if not container:
             return {}
 
-        tags = RecipeHandler(container).extract(
-            [".o-Ingredients__a-SubHeadline", ".o-Ingredients__a-Ingredient"],
-            remove=".o-Ingredients__a-Ingredient--SelectAll",
+        for remove in container.find_all(
+            class_="o-Ingredients__a-Ingredient--SelectAll"
+        ):
+            remove.extract()
+
+        tags = container.select(
+            ".o-Ingredients__a-SubHeadline, .o-Ingredients__a-Ingredient"
         )
         texts = [text(tag) for tag in tags]
         groups = split_into_subheadings(texts)

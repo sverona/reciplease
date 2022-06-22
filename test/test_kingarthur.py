@@ -1,11 +1,12 @@
-from scrape import from_url
+from handlers import Page, Recipe
+from handlers.kingarthur import KingArthurHandler
 
 
 class TestKingArthur:
     """The King Arthur Baking handler should..."""
 
     url = "https://www.kingarthurbaking.com/recipes/lemon-bliss-cake-recipe"
-    recipe = from_url(url)
+    recipe = Recipe(Page(url), KingArthurHandler)
 
     def test_ingredient_sections(self):
         """...break ingredients up by section."""
@@ -34,7 +35,7 @@ class TestKingArthur:
 
         assert (
             "For stronger lemon flavor, use the grated rind of 2 lemons + 1/2 teaspoon lemon oil."
-            in self.recipe.notes["Notes"]
+            in self.recipe.notes[None]
         )
 
     def test_author(self):
@@ -52,7 +53,7 @@ class TestKingArthur:
 
         assert (
             "*If you use salted butter, reduce the salt in the recipe to 3/4 teaspoon."
-            in self.recipe.notes["Notes"]
+            in self.recipe.notes[None]
         )
 
     def test_time(self):
