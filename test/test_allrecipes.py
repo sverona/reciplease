@@ -23,24 +23,33 @@ class TestAllrecipes:
             "1 cup tomato sauce"
             in self.recipe.ingredients["Taco Meat Stuffing"]
         )
+        assert len(self.recipe.ingredients["Taco Meat Stuffing"]) == 15
+
         assert (
             "4 large zucchini, halved lengthwise"
             in self.recipe.ingredients["Rest"]
         )
+        assert len(self.recipe.ingredients["Rest"]) == 2
 
     def test_instructions(self):
         """...properly scrape instructions."""
         assert (
-            "Meanwhile, preheat the oven to 400 degrees F (200 degrees C). Line a baking sheet with a silicone liner."
+            "Meanwhile, preheat the oven to 400 degrees F (200 degrees C)."
+            " Line a baking sheet with a silicone liner."
             in self.recipe.instructions[None]
         )
+
+        assert len(self.recipe.instructions[None]) == 6
 
     def test_notes(self):
         """...properly scrape recipe notes."""
         assert (
-            "You can cook these for less time if you prefer a firmer zucchini texture."
+            "You can cook these for less time if you prefer a firmer zucchini"
+            " texture."
             in self.recipe.notes["Chef's Notes"]
         )
+
+        assert len(self.recipe.notes["Chef's Notes"]) == 3
 
     def test_time(self):
         """...properly convert times into a dict."""
