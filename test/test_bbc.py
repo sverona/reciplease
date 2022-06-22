@@ -5,7 +5,7 @@ from handlers.bbc import BBCHandler
 class TestBBC:
     """The BBC handler should..."""
 
-    url = "https://www.bbcgoodfood.com/recipes/red-lentil-pasta-with-creamy-tomato-pepper-sauce"
+    url = "https://www.bbcgoodfood.com/recipes/red-lentil-pasta-with-creamy-tomato-pepper-sauce"  # noqa:E501
     recipe = Recipe(Page(url), BBCHandler)
 
     def test_title(self):
@@ -36,6 +36,7 @@ class TestBBC:
         assert (
             "4 sundried tomatoes" in self.recipe.ingredients["For the sauce"]
         )
+        assert len(self.recipe.ingredients["For the sauce"]) == 5
 
     def test_instructions(self):
         """...properly scrape instructions."""
@@ -44,6 +45,7 @@ class TestBBC:
             " between two bowls and add a handful of rocket to each."
             in self.recipe.instructions[None]
         )
+        assert len(self.recipe.instructions[None]) == 3
 
     def test_time(self):
         """...properly convert times into a dict."""

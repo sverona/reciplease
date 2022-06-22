@@ -5,9 +5,7 @@ from handlers.food52 import Food52Handler
 class TestFood52:
     """The Food52 handler should..."""
 
-    url = (
-        "https://food52.com/recipes/34010-soba-with-parsley-pea-pesto-and-kale"
-    )
+    url = "https://food52.com/recipes/34010-soba-with-parsley-pea-pesto-and-kale"  # noqa
     recipe = Recipe(Page(url), Food52Handler)
 
     def test_title(self):
@@ -34,6 +32,8 @@ class TestFood52:
         """...scrape the ingredients."""
         assert "Salt, to taste" in self.recipe.ingredients["Soba with kale"]
 
+        assert len(self.recipe.ingredients["Soba with kale"]) == 5
+
     def test_instruction_sections(self):
         """...break instructions up into sections."""
         assert len(self.recipe.instructions) == 2
@@ -46,5 +46,7 @@ class TestFood52:
             " done! Enjoy!"
             in self.recipe.instructions["Soba with kale"]
         )
+
+        assert len(self.recipe.instructions["Soba with kale"]) == 3
 
     # Could not find a Food52 recipe with a time section.

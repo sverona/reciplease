@@ -36,6 +36,7 @@ class TestFoodNetwork:
     def test_ingredients(self):
         """...scrape the ingredients."""
         assert "4 large eggs" in self.recipe.ingredients["Zucchini Cakes"]
+        assert len(self.recipe.ingredients["Zucchini Cakes"]) == 10
 
     def test_instructions(self):
         """...scrape the instructions."""
@@ -44,3 +45,5 @@ class TestFoodNetwork:
             " in a medium bowl. Set aside."
             in self.recipe.instructions[None]
         )
+
+        assert len(self.recipe.instructions[None]) == 3

@@ -39,6 +39,7 @@ class TestWordpressTastyV3:
     def test_ingredients(self):
         """...properly scrape ingredients."""
         assert "3 cups all purpose flour" in self.recipe.ingredients[None]
+        assert len(self.recipe.ingredients[None]) == 4
 
     def test_instructions(self):
         """...properly scrape instructions."""
@@ -48,6 +49,7 @@ class TestWordpressTastyV3:
             " thick dough forms. Let it rest, like maybe forever."
             in self.recipe.instructions[None]
         )
+        assert len(self.recipe.instructions[None]) == 3
 
     def test_notes(self):
         """...properly scrape recipe notes."""

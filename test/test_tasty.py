@@ -31,6 +31,7 @@ class TestTasty:
         assert (
             "1 tablespoon ginger, crushed" in self.recipe.ingredients["Paneer"]
         )
+        assert len(self.recipe.ingredients["For Serving"]) == 3
 
     def test_ingredient_sections(self):
         """...properly break ingredients up into sections."""
@@ -39,5 +40,6 @@ class TestTasty:
     def test_instructions(self):
         """...properly scrape instructions."""
         assert "Enjoy!" in self.recipe.instructions[None]
+        assert len(self.recipe.instructions[None]) == 7
 
     # I was unable to find a tasty.co recipe that included notes.

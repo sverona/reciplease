@@ -5,7 +5,7 @@ from handlers.epicurious import EpicuriousHandler
 class TestEpicurious:
     """The Epicurious handler should..."""
 
-    url = "https://www.epicurious.com/recipes/food/views/glazed-cinnamon-cardamom-buns"
+    url = "https://www.epicurious.com/recipes/food/views/glazed-cinnamon-cardamom-buns"  # noqa:E501
     recipe = Recipe(Page(url), EpicuriousHandler)
 
     def test_title(self):
@@ -32,6 +32,8 @@ class TestEpicurious:
         """...properly scrape the ingredients."""
         assert "1 large egg" in self.recipe.ingredients["For the Dough"]
 
+        assert len(self.recipe.ingredients["For the Dough"]) == 9
+
     def test_instruction_sections(self):
         """...break instructions up into sections."""
         assert len(self.recipe.instructions) == 2
@@ -43,6 +45,8 @@ class TestEpicurious:
             " until combined."
             in self.recipe.instructions["For the Filling and Assembly"]
         )
+
+        assert len(self.recipe.instructions["For the Dough"]) == 3
 
     def test_time(self):
         """...properly parse the times into a dict."""

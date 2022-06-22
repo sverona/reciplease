@@ -5,7 +5,7 @@ from handlers.delish import DelishHandler
 class TestDelish:
     """The Delish handler should..."""
 
-    url = "https://www.delish.com/cooking/recipe-ideas/a40119787/pork-adobo-recipe/"
+    url = "https://www.delish.com/cooking/recipe-ideas/a40119787/pork-adobo-recipe/"  # noqa:E501
     recipe = Recipe(Page(url), DelishHandler)
 
     def test_title(self):
@@ -32,6 +32,8 @@ class TestDelish:
         """...properly scrape ingredients."""
         assert "2 tbsp. fish sauce" in self.recipe.ingredients["Marinade"]
 
+        assert len(self.recipe.ingredients["Marinade"]) == 7
+
     def test_instruction_sections(self):
         """...break instructions up into sections."""
         assert len(self.recipe.instructions) == 2
@@ -42,6 +44,8 @@ class TestDelish:
             "Place rice on a platter. Top with pork and pour sauce over."
             in self.recipe.instructions["Adobo And Assembly"]
         )
+
+        assert len(self.recipe.instructions["Adobo And Assembly"]) == 4
 
     def test_time(self):
         """...properly convert times into a dict."""
@@ -54,7 +58,7 @@ class TestDelish:
 class TestDelishOnGoodHousekeeping:
     """When run on Good Housekeeping, the Delish handler should..."""
 
-    url = "https://www.goodhousekeeping.com/food-recipes/healthy/a30729432/spring-green-salad-apricot-vinaigrette-recipe/"
+    url = "https://www.goodhousekeeping.com/food-recipes/healthy/a30729432/spring-green-salad-apricot-vinaigrette-recipe/"  # noqa:E501
     recipe = Recipe(Page(url), DelishHandler)
 
     def test_title(self):
@@ -86,9 +90,13 @@ class TestDelishOnGoodHousekeeping:
         """...scrape the ingredients."""
         assert "2 tbsp. olive oil" in self.recipe.ingredients[None]
 
+        assert len(self.recipe.ingredients[None]) == 11
+
     def test_instructions(self):
         """...scrape the instructions."""
         assert (
             "Toss together remaining ingredients, then toss with vinaigrette."
             in self.recipe.instructions[None]
         )
+
+        assert len(self.recipe.instructions[None]) == 3

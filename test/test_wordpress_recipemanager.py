@@ -19,6 +19,7 @@ class TestWordpressRecipeManager:
     def test_ingredients(self):
         """...properly scrape ingredients."""
         assert "3 cloves" in self.recipe.ingredients["Kadai Masala"]
+        assert len(self.recipe.ingredients["Kadai Masala"]) == 5
 
     def test_instruction_sections(self):
         """...break instructions up into sections."""
@@ -30,6 +31,7 @@ class TestWordpressRecipeManager:
             "Crush kasuri methi and add to the pan."
             in self.recipe.instructions["Make the Kadai Paneer"]
         )
+        assert len(self.recipe.instructions["Make the Kadai Paneer"]) == 10
 
     def test_time(self):
         """...properly parse times into a dict."""

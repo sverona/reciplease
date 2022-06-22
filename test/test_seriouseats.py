@@ -11,15 +11,21 @@ class TestSeriousEats:
     def test_ingredients(self):
         """...properly scrape ingredients."""
 
-        assert "1 tablespoon (15g) tahini paste" in self.recipe.ingredients[""]
+        assert (
+            "1 tablespoon (15g) tahini paste" in self.recipe.ingredients[None]
+        )
+
+        assert len(self.recipe.ingredients[None]) == 7
 
     def test_instructions(self):
         """...properly scrape instructions."""
         assert (
             "Add cucumber spears and toss until evenly coated with sauce."
             " Transfer to a serving plate, garnish with dill, and serve."
-            in self.recipe.instructions[""]
+            in self.recipe.instructions[None]
         )
+
+        assert len(self.recipe.instructions[None]) == 4
 
     def test_notes(self):
         """...properly scrape notes."""

@@ -5,7 +5,7 @@ from handlers.allrecipes import AllrecipesHandler
 class TestAllrecipes:
     """The AllRecipes handler should..."""
 
-    url = "https://www.allrecipes.com/recipe/281437/chef-johns-taco-stuffed-zucchini-boats/"
+    url = "https://www.allrecipes.com/recipe/281437/chef-johns-taco-stuffed-zucchini-boats/"  # noqa:E501
     recipe = Recipe(Page(url), AllrecipesHandler)
 
     def test_title(self):
