@@ -1,2 +1,2 @@
 [MESSAGES CONTROL]
-disable=C0114,too-many-instance-attributes
+disable=C0114,too-many-instance-attributes,line-too-long

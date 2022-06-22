@@ -18,3 +18,8 @@ repos:
     hooks:
     -   id: mypy
         additional_dependencies: ["types-requests"]
+-   repo: https://github.com/PyCQA/prospector
+    rev: 1.7.7
+    hooks:
+    -   id: prospector
+        additional_dependencies: ["flask", "requests", "bs4"]
