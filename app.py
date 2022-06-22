@@ -56,6 +56,7 @@ def route_to_recipe():
             return "404"
 
         return redirect(f"/{url}")
+    return "404"
 
 
 @app.route("/<path:url>")
