@@ -53,15 +53,18 @@ Below is a list of sites that have been verified to work with Reciplease.
 ### BBC
 - bbcgoodfood.com
 
+### Food52
+- food52.com
+
+### Food Network
+- foodnetwork.com
 
 ## Presently unsupported sites
 Below is a list of sites that do not work yet with Reciplease.
 
 ### Custom
-- foodnetwork.com
 - pillsbury.com
 - thepioneerwoman.com
-- food52.com
 - themodernproper.com
 - marthastewart.com
 - goodhousekeeping.com

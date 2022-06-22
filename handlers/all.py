@@ -10,6 +10,7 @@ from .bbc import BBCHandler
 from .delish import DelishHandler
 from .epicurious import EpicuriousHandler
 from .food52 import Food52Handler
+from .foodnetwork import FoodNetworkHandler
 from .kingarthur import KingArthurHandler
 from .seriouseats import SeriousEatsHandler
 from .tasty import TastyHandler
@@ -28,6 +29,7 @@ ALL_HANDLERS = [
     DelishHandler,
     EpicuriousHandler,
     Food52Handler,
+    FoodNetworkHandler,
     KingArthurHandler,
     SeriousEatsHandler,
     TastyHandler,
