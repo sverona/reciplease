@@ -8,12 +8,13 @@ from handlers.all import ALL_HANDLERS
 
 
 class TestNegative:
-    """Checking for correct negative responses:"""
+    """Checking for correct negative responses..."""
 
     @pytest.mark.parametrize("handler", [RecipeHandler] + ALL_HANDLERS)
     def test_handler_for_correct_negative_response(
         self, handler: Type[RecipeHandler]
     ):
+        """{handler.__name__} returns the correct negative response."""
         empty_soup = BeautifulSoup("<html></html>", features="lxml")
         page = Page("", soup=empty_soup)
 
