@@ -22,19 +22,23 @@ class Page:
     url: URL
     soup: Tag
 
-    def __init__(self, url: str):
+    def __init__(self, url: str, soup: BeautifulSoup | None = None):
         self.url = urlparse(url)
 
-        headers = {
-            "User-Agent": (
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:88.0)"
-                "Gecko/20100101 Firefox/88.0"
-            )
-        }
-        resp = r.get(url, headers=headers)
-        resp.raise_for_status()
+        if self.url.scheme and self.url.netloc:
+            headers = {
+                "User-Agent": (
+                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:88.0)"
+                    "Gecko/20100101 Firefox/88.0"
+                )
+            }
+            resp = r.get(url, headers=headers)
+            resp.raise_for_status()
 
-        self.soup = BeautifulSoup(resp.text, "lxml")
+        if not soup:
+            self.soup = BeautifulSoup(resp.text, "html.parser")
+        else:
+            self.soup = soup
 
 
 class RecipeHandler:

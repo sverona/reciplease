@@ -42,6 +42,8 @@ class AllrecipesHandler(RecipeHandler):
             ".section-body", root=".instructions-section"
         )
         steps = [text(step) for step in steps_tags]
+        if not steps:
+            return {}
 
         return {None: steps}
 

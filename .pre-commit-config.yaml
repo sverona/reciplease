@@ -22,4 +22,4 @@ repos:
     rev: 1.7.7
     hooks:
     -   id: prospector
-        additional_dependencies: ["flask", "requests", "bs4"]
+        additional_dependencies: ["flask", "requests", "bs4", "pytest"]
