@@ -70,9 +70,7 @@ class RecipeHandler:
 
         if isinstance(site_name, Tag):
             content = site_name.attrs["content"]
-            if isinstance(content, str):
-                return content
-            return ", ".join(content)
+            return content
         return ""
 
     def time(self) -> dict[str, str]:
