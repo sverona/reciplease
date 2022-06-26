@@ -21,6 +21,17 @@
     </ul>
   </header>
   <article>
+    <section id="ingredients">
+      {% for section, ingredient_list in recipe.ingredients.items() %}
+      {% if section %}<h3>{{ section }}</h3>{% endif %}
+      <ul>
+        {% for ingredient in ingredient_list %}
+        <li>{{ ingredient | wrap_fractions | safe }}</li>
+        {% endfor %}
+      </ul>
+      {% endfor %}
+      </ul>
+    </section>
     <section id="instructions">
       <h2>Instructions</h2>
       {% for section, instruction_list in recipe.instructions.items() %}
@@ -36,34 +47,21 @@
       {% endif %}
       {% endfor %}
     </section>
-    <section id="right-col">
-      <section id="ingredients">
-        {% for section, ingredient_list in recipe.ingredients.items() %}
-        {% if section %}<h3>{{ section }}</h3>{% endif %}
-        <ul>
-          {% for ingredient in ingredient_list %}
-          <li>{{ ingredient | wrap_fractions | safe }}</li>
+    {% if recipe.notes %}
+    <section id="notes">
+        {% for section, note_list in recipe.notes.items() %}
+        {% if note_list %}<h2>{{ section or "Notes" }}</h2>{% endif %}
+        {% if note_list | length == 1 %}
+        <p>{{ note_list[0] | wrap_fractions | safe }}</p>
+        {% else %}
+        <ol>
+          {% for note in note_list %}
+          <li>{{ note | wrap_fractions | safe }}</li>
           {% endfor %}
-        </ul>
+        </ol>
+        {% endif %}
         {% endfor %}
-        </ul>
-      </section>
-      {% if recipe.notes %}
-      <section id="notes">
-          {% for section, note_list in recipe.notes.items() %}
-          {% if note_list %}<h2>{{ section or "Notes" }}</h2>{% endif %}
-          {% if note_list | length == 1 %}
-          <p>{{ note_list[0] | wrap_fractions | safe }}</p>
-          {% else %}
-          <ol>
-            {% for note in note_list %}
-            <li>{{ note | wrap_fractions | safe }}</li>
-            {% endfor %}
-          </ol>
-          {% endif %}
-          {% endfor %}
-      </section>
-      {% endif %}
     </section>
+    {% endif %}
   </article>
 </main>
