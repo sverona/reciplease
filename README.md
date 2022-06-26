@@ -27,7 +27,7 @@ Below is a list of sites that have been verified to work with Reciplease.
 - cookwithmanali.com
 - holycowvegan.net
 
-### WP Tasty Recipes V3
+### WP Tasty Recipes v3
 - sallysbakingaddiction.com
 - gimmesomeoven.com (has sections) (https://www.gimmesomeoven.com/avocado-strawberry-spinach-salad-with-poppyseed-dressing/)
 
@@ -37,21 +37,12 @@ Below is a list of sites that have been verified to work with Reciplease.
 ### Allrecipes
 - allrecipes.com
 
-### SeriousEats (fix meta)
-- seriouseats.com
-- simplyrecipes.com
-
-### King Arthur
-- kingarthurbaking.com
-
-### Tasty
-- tasty.co
+### BBC
+- bbcgoodfood.com
 
 ### Delish
 - delish.com
-
-### BBC
-- bbcgoodfood.com
+- goodhousekeeping.com
 
 ### Food52
 - food52.com
@@ -59,8 +50,15 @@ Below is a list of sites that have been verified to work with Reciplease.
 ### Food Network
 - foodnetwork.com
 
-### Good Housekeeping
-- goodhousekeeping.com
+### King Arthur
+- kingarthurbaking.com
+
+### Tasty
+- tasty.co
+
+### SeriousEats
+- seriouseats.com
+- simplyrecipes.com
 
 ## Presently unsupported sites
 Below is a list of sites that do not work yet with Reciplease.
