@@ -1,5 +1,5 @@
 # Reciplease
-Reciplease is a universal "print recipe" button; it takes recipe URLs and
+Reciplease takes recipe URLs and
 transforms them into consistently formatted, nicely typeset recipes.
 
 Usage is similar to https://12ft.io; to convert `https://your-recipe-url`,
