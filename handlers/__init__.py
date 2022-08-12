@@ -4,7 +4,7 @@
 from copy import copy
 from dataclasses import dataclass
 import re
-from typing import Iterable
+from typing import Iterable, Optional, Union
 from urllib.parse import ParseResult as URL, urlparse
 import unicodedata
 
@@ -12,7 +12,8 @@ from bs4 import BeautifulSoup, NavigableString, Tag
 import requests as r
 
 
-SubheadingGroup = dict[str | None, list[str]]
+SubheadingGroup = dict[Optional[str], list[str]]
+OneOrMoreStrings = Union[str, Iterable[str]]
 
 
 @dataclass
@@ -22,7 +23,7 @@ class Page:
     url: URL
     soup: Tag
 
-    def __init__(self, url: str, soup: BeautifulSoup | None = None):
+    def __init__(self, url: str, soup: Optional[BeautifulSoup] = None):
         self.url = urlparse(url)
 
         if self.url.scheme and self.url.netloc:
@@ -97,8 +98,8 @@ class RecipeHandler:
 
     def extract(
         self,
-        keep: str | Iterable[str],
-        remove: str | Iterable[str] | None = None,
+        keep: OneOrMoreStrings,
+        remove: Optional[OneOrMoreStrings] = None,
         root=None,
     ) -> list[Tag]:
         """Extract all elements in `self.soup` matching any selector in `keep`,
@@ -130,8 +131,8 @@ class RecipeHandler:
         return []
 
     def extract_one(
-        self, keep: str | Iterable[str], remove=None, root=None
-    ) -> Tag | None:
+        self, keep: OneOrMoreStrings, remove=None, root=None
+    ) -> Optional[Tag]:
         """Same as `_extract` but return at most one match."""
         elements = self.extract(keep, remove, root)
         if elements:
@@ -139,7 +140,7 @@ class RecipeHandler:
         return None
 
 
-def text(tag: Tag | NavigableString | None, squeeze: bool = False) -> str:
+def text(tag: Union[Tag, NavigableString, None], squeeze: bool = False) -> str:
     """Return the normalized, stripped text of an HTML `tag`, or the empty
     string if `tag` is `None`.
 
